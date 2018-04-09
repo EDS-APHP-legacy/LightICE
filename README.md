@@ -39,4 +39,4 @@ java -jar avro-tools-1.8.2.jar compile schema resources/records.avsc src/
 
 ## Licence
 
-* [https://github.com/mdpnp/mdpnp/blob/master/interop-lab/demo-apps/LICENSE.txt](MDPNP Licence)
+* [MDPNP Licence](https://github.com/mdpnp/mdpnp/blob/master/interop-lab/demo-apps/LICENSE.txt)
