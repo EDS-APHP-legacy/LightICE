@@ -1,0 +1,141 @@
+[
+    {
+        "namespace": "export.serializers.avro",
+        "type": "record",
+        "name": "DataSingle",
+        "fields": [
+            {
+                "name": "rosettaCode",
+                "type": "string"
+            },
+            {
+                "name": "metricId",
+                "type": "string"
+            },
+            {
+                "name": "vendorMetricId",
+                "type": "string"
+            },
+            {
+                "name": "instanceId",
+                "type": "int"
+            },
+            {
+                "name": "value",
+                "type": "float"
+            },
+            {
+                 "name": "timestampNano",
+                 "type": "long"
+            }
+        ]
+    },
+    {
+    	"namespace": "export.serializers.avro",
+        "type": "record",
+        "name": "DataArray",
+        "fields": [
+            {
+                "name": "frequency",
+                "type": "float"
+            },
+            {
+                "name": "rosettaCode",
+                "type": "string"
+            },
+            {
+                "name": "metricId",
+                "type": "string"
+            },
+            {
+                "name": "vendorMetricId",
+                "type": "string"
+            },
+            {
+                "name": "instanceId",
+                "type": "int"
+            },
+            {
+                "name": "values",
+                "type": {"type": "array", "items": {"name": "value", "type": "float"}}
+            },
+            {
+                 "name": "timestampsNano",
+                 "type": {"type": "array", "items": {"name": "timestamp", "type": "long"}}
+            }
+        ]
+    },
+    {
+        "namespace": "export.serializers.avro",
+        "type": "record",
+        "name": "DeviceInfo",
+        "fields": [
+            {
+                "name": "site",
+                "type": "string"
+            },
+            {
+                "name": "service",
+                "type": "string"
+            },
+            {
+                "name": "sector",
+                "type": "string"
+            },
+            {
+                "name": "room",
+                "type": "string"
+            },
+            {
+                "name": "alias",
+                "type": "string"
+            },
+            {
+                "name": "serialPort",
+                "type": "string"
+            },
+            {
+                "name": "driver",
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "namespace": "export.serializers.avro",
+        "type": "record",
+        "name": "SingleValue",
+        "fields": [
+            {
+                "name": "dataType",
+                "type": "string"
+            },
+            {
+                "name": "deviceInfo",
+                "type": "DeviceInfo"
+            },
+            {
+                "name": "data",
+                "type": "DataSingle"
+            }
+        ]
+    },
+    {
+    	"namespace": "export.serializers.avro",
+    	"type": "record",
+    	"name": "ArrayValues",
+    	"fields": [
+    		{
+    			"name": "dataType",
+    			"type": "string"
+    		},
+    		{
+    			"name": "deviceInfo",
+    			"type": "DeviceInfo"
+    		},
+    		{
+    			"name": "data",
+    			"type": "DataArray"
+    		}
+    	]
+    }
+]

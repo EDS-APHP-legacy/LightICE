@@ -1,0 +1,8 @@
+package rosetta;
+        
+
+public class MDC_DIM_ANG_RAD {    
+    
+    public static final String VALUE = "MDC_DIM_ANG_RAD";
+}
+

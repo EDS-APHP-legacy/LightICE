@@ -1,0 +1,84 @@
+{
+  "writers": [
+    {
+      "type": "kafka",
+      "serializer": "avro",
+      "topic": "mytopic",
+      "jaasConfPath": null,
+      "properties": {
+        "bootstrap.servers": "localhost:9092",
+        "acks": "all",
+        "retries": 0,
+        "batch.size": 16384,
+        "linger.ms": 1,
+        "buffer.memory": 33554432
+      }
+    },
+    {
+      "type": "kafka",
+      "serializer": "json",
+      "topic": "test",
+      "jaasConfPath": "kafka_jaas.conf",
+      "properties": {
+        "bootstrap.servers": "kerberized-host:9092",
+        "acks": "all",
+        "retries": 0,
+        "batch.size": 16384,
+        "linger.ms": 1,
+        "buffer.memory": 33554432,
+        "security.protocol": "SASL_PLAINTEXT"
+      }
+    },
+    {
+      "type": "stdout",
+      "serializer": "json"
+    }
+  ],
+  "servers": [
+    {
+      "alias": "Device one",
+      "site": "Boston Children's hospital",
+      "service": "ICU",
+      "sector": "blue",
+      "room": "A6",
+      "serialPort": "tty_a6",
+      "driver": "philips_rs232"
+    },
+    {
+      "alias": "Device two",
+      "site": "Boston Children's hospital",
+      "service": "ICU",
+      "sector": "blue",
+      "room": "A7",
+      "serialPort": "tty_a7",
+      "driver": "philips_rs232"
+    },
+    {
+      "alias": "Device three",
+      "site": "Boston Children's hospital",
+      "service": "ICU",
+      "sector": "yellow",
+      "room": "Z2",
+      "serialPort": "tty_z2",
+      "driver": "philips_rs232"
+    },
+    {
+      "alias": "Device four",
+      "site": "Boston Children's hospital",
+      "service": "ICU",
+      "sector": "green",
+      "room": "L8",
+      "serialPort": "tty_l8",
+      "driver": "philips_rs232"
+    },
+    {
+      "alias": "Device five",
+      "site": "Boston Children's hospital",
+      "service": "ICU",
+      "sector": "blue",
+      "room": "A2",
+      "serialPort": "tty_a2",
+      "driver": "philips_rs232"
+    }
+  ]
+}
