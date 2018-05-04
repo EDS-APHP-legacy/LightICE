@@ -3,7 +3,6 @@ package export.writers;
 import common.DeviceIdentity;
 import datatypes.Data;
 import export.serializers.Serializer;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public abstract class Writer {
@@ -14,6 +13,6 @@ public abstract class Writer {
     }
 
     public void write(DeviceIdentity deviceIdentity, Data data) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

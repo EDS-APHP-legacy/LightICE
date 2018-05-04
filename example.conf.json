@@ -3,6 +3,7 @@
     {
       "type": "kafka",
       "serializer": "avro",
+      "serializer_flat": true,
       "topic": "mytopic",
       "jaasConfPath": null,
       "properties": {
@@ -17,6 +18,7 @@
     {
       "type": "kafka",
       "serializer": "json",
+      "serializer_flat": false,
       "topic": "test",
       "jaasConfPath": "kafka_jaas.conf",
       "properties": {

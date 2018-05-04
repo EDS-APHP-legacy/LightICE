@@ -6,11 +6,9 @@ import com.eclipsesource.json.JsonValue;
 import export.serializers.AvroSerializer;
 import export.serializers.JsonSerializer;
 import export.serializers.Serializer;
-import export.writers.DruidWriter;
 import export.writers.KafkaWriter;
 import export.writers.StdoutWriter;
 import export.writers.Writer;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,21 +53,24 @@ public class Conf {
 
         for (JsonValue value : Json.parse(readFileToString(configurationPath)).asObject().get("writers").asArray()) {
             String type = value.asObject().get("type").asString();
-            String serializerName = value.asObject().get("serializer").asString();
 
-            Serializer serializer;
-
-            if (Objects.equals(serializerName, "json")) {
-                serializer = new JsonSerializer();
+            Serializer serializer = null;
+            try {
+                String serializerName = value.asObject().get("serializer").asString();
+                boolean serializerFlat = value.asObject().get("serializer_flat").asBoolean();
+                if (Objects.equals(serializerName, "json")) {
+                    serializer = new JsonSerializer(serializerFlat);
+                }
+                else if (Objects.equals(serializerName, "avro")) {
+                    serializer = new AvroSerializer(serializerFlat);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
             }
-            else if (Objects.equals(serializerName, "avro")) {
-                serializer = new AvroSerializer();
+            catch (NullPointerException ignored) {
             }
-            else {
-                throw new NotImplementedException();
-            }
-
-
+            
             Writer writer;
             if (Objects.equals(type, "kafka")) {
                 String kafkaTopic = value.asObject().get("topic").asString();
@@ -82,21 +83,15 @@ public class Conf {
                     else if (subValue.getValue().isString())
                         props.put(subValue.getName(), subValue.getValue().asString());
                     else
-                        throw new NotImplementedException();
+                        throw new UnsupportedOperationException();
                 }
                 writer = new KafkaWriter(serializer, kafkaTopic, jaasConfPath, props);
             }
             else if (Objects.equals(type, "stdout")) {
                 writer = new StdoutWriter(serializer);
             }
-            else if (Objects.equals(type, "druid")) {
-                writer = new DruidWriter(serializer);
-            }
-            else if (Objects.equals(type, "tcp")) {
-                throw new NotImplementedException();
-            }
             else {
-                throw new NotImplementedException();
+                throw new UnsupportedOperationException();
             }
 
             conf.addWriter(writer);

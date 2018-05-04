@@ -36,10 +36,12 @@ public class KafkaWriter extends Writer {
     @Override
     public void write(DeviceIdentity deviceIdentity, Data data) {
         if (serializer.outputType == String.class) {
-            this.producer.send(new ProducerRecord<>(this.topic, this.serializer.serializeToString(deviceIdentity, data)));
+            for (String s : this.serializer.serializeToString(deviceIdentity, data))
+                this.producer.send(new ProducerRecord<>(this.topic, s));
         }
         else if (serializer.outputType == ByteBuffer.class) {
-            this.producer.send(new ProducerRecord<>(this.topic, this.serializer.serializeToBytes(deviceIdentity, data)));
+            for (byte[] s : this.serializer.serializeToBytes(deviceIdentity, data))
+                this.producer.send(new ProducerRecord<>(this.topic, s));
         }
     }
 }

@@ -11,6 +11,7 @@ public class StdoutWriter extends Writer {
 
     @Override
     public void write(DeviceIdentity deviceIdentity, Data data) {
-        System.out.println(this.serializer.serializeToString(deviceIdentity, data));
+        for (String s : this.serializer.serializeToString(deviceIdentity, data))
+            System.out.println(s);
     }
 }

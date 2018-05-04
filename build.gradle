@@ -2,6 +2,8 @@ group 'fr.aphp.eds'
 version '1.0'
 
 apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 apply plugin: 'application'
 apply plugin: 'idea'
 
@@ -48,4 +50,24 @@ dependencies {
 
     // Jar
     compile fileTree(dir: 'lib', include: '**/*.jar')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'fr.aphp.eds'
+            artifactId 'LightICE'
+            version '1.0'
+
+            from components.java
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
 }

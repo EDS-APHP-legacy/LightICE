@@ -12,6 +12,7 @@ public class Main {
         Conf conf = parseConfig("conf.json");
 
         for (Device device : conf.getDevices()) {
+            System.out.println("Connecting to " + device.deviceIdentity.getAlias() + "...");
             device.run();
             for (Writer writer : conf.getWriters())
                 device.addListener(writer);

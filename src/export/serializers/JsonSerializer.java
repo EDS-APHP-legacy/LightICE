@@ -4,92 +4,117 @@ import common.DeviceIdentity;
 import datatypes.Data;
 import datatypes.Numeric;
 import datatypes.SampleArray;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonSerializer extends Serializer {
-    public JsonSerializer() {
-        super(String.class);
+    public JsonSerializer(boolean flat) {
+        super(String.class, flat);
     }
 
     @Override
-    public String serializeToString(DeviceIdentity deviceIdentity, Data data) {
+    public List<String> serializeToString(DeviceIdentity deviceIdentity, Data data) {
+        List<String> result = new ArrayList<>();
+
         if (data instanceof SampleArray) {
             SampleArray sa = (SampleArray) data;
-
-
-            StringBuffer valuesStrBuffer = new StringBuffer();
-            StringBuffer timestampsStrBuffer = new StringBuffer();
 
             float[] values = sa.getValues();
             long[] timestampsNano = sa.getTimestampsDeviceTime(false);
 
-            for(int i = 0; i < values.length; ++i) {
-                if (i != 0) {
-                    valuesStrBuffer.append(",");
-                    timestampsStrBuffer.append(",");
+
+            if (this.flat) {
+                for(int i = 0; i < values.length; ++i) {
+                    result.add("{" +
+                            "\"deviceinfo_site\": \"" + sa.deviceIdentity.getSite() + "\"," +
+                            "\"deviceinfo_service\": \"" + sa.deviceIdentity.getService() + "\"," +
+                            "\"deviceinfo_sector\": \"" + sa.deviceIdentity.getSector() + "\"," +
+                            "\"deviceinfo_room\": \"" + sa.deviceIdentity.getRoom() + "\"," +
+                            "\"deviceinfo_alias\": \"" + sa.deviceIdentity.getAlias() + "\"," +
+                            "\"deviceinfo_serial_port\": \"" + sa.deviceIdentity.getSerialPort() + "\"," +
+                            "\"deviceinfo_driver\": \"" + sa.deviceIdentity.getDriver() + "\"," +
+                            "\"deviceinfo_manufacturer\": \"" + sa.deviceIdentity.getManufacturer() + "\"," +
+                            "\"deviceinfo_model\": \"" + sa.deviceIdentity.getModel() + "\"," +
+                            "\"deviceinfo_serial_number\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
+                            "\"deviceinfo_operating_system\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"," +
+                            "\"data_type\": \"sample\"," +
+                            "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
+                            "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
+                            "\"data_frequency\": \"" + sa.frequency + "\", " +
+                            "\"data_rosetta_code\": \"" + sa.rosettaCode + "\", " +
+                            "\"data_metric_id\": \"" + sa.metricId + "\", " +
+                            "\"data_vendor_metric_id\": \"" + sa.vendorMetricId + "\", " +
+                            "\"data_instance_id\": \"" + sa.instanceId + "\", " +
+                            "\"data_value\": [" + values[i] + "]" + "\", " +
+                            "\"data_timestamp_nano\": [" + timestampsNano[i] + "]" +
+                            "}");
                 }
-                valuesStrBuffer.append(values[i]);
-                timestampsStrBuffer.append(timestampsNano[i]);
             }
+            else {
+                StringBuilder valuesStrBuffer = new StringBuilder();
+                StringBuilder timestampsStrBuffer = new StringBuilder();
 
-//            System.out.println(timestampsStrBuffer.toString());
 
+                for(int i = 0; i < values.length; ++i) {
+                    if (i != 0) {
+                        valuesStrBuffer.append(",");
+                        timestampsStrBuffer.append(",");
+                    }
+                    valuesStrBuffer.append(values[i]);
+                    timestampsStrBuffer.append(timestampsNano[i]);
+                }
 
-            return "{" +
-                      "\"device_info\": {" +
-                        "\"site\": \"" + sa.deviceIdentity.getSite() + "\"," +
-                        "\"service\": \"" + sa.deviceIdentity.getService() + "\"," +
-                        "\"sector\": \"" + sa.deviceIdentity.getSector() + "\"," +
-                        "\"room\": \"" + sa.deviceIdentity.getRoom() + "\"," +
-                        "\"alias\": \"" + sa.deviceIdentity.getAlias() + "\"," +
-                        "\"serialPort\": \"" + sa.deviceIdentity.getSerialPort() + "\"," +
-                        "\"driver\": \"" + sa.deviceIdentity.getDriver() + "\"," +
-                        "\"manufacturer\": \"" + sa.deviceIdentity.getManufacturer() + "\"," +
-                        "\"model\": \"" + sa.deviceIdentity.getModel() + "\"," +
-                        "\"serialNumber\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
-                        "\"operatingSystem\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"" +
-                      "}," +
-                      "\"data_type\": \"sample\"," +
-                      "\"data\": {" +
-                        "\"presentationTime\": " + sa.presentationTime.timestampMilli() + "," +
-                        "\"deviceTime\": " + sa.deviceTime.timestampMilli() + "," +
-                        "\"frequency\": \"" + sa.frequency + "\", " +
-                        "\"rosetta_code\": \"" + sa.rosettaCode + "\", " +
-                        "\"metric_id\": \"" + sa.metricId + "\", " +
-                        "\"vendor_metric_id\": \"" + sa.vendorMetricId + "\", " +
-                        "\"instance_id\": \"" + sa.instanceId + "\", " +
-                        "\"values\": [" + valuesStrBuffer.toString() + "]" + "\", " +
-                        "\"timestampsNano\": [" + timestampsStrBuffer.toString() + "]" + "\", " +
-                      "}" +
-                    "}";
+                result.add("{" +
+                        "\"deviceinfo_site\": \"" + sa.deviceIdentity.getSite() + "\"," +
+                        "\"deviceinfo_service\": \"" + sa.deviceIdentity.getService() + "\"," +
+                        "\"deviceinfo_sector\": \"" + sa.deviceIdentity.getSector() + "\"," +
+                        "\"deviceinfo_room\": \"" + sa.deviceIdentity.getRoom() + "\"," +
+                        "\"deviceinfo_alias\": \"" + sa.deviceIdentity.getAlias() + "\"," +
+                        "\"deviceinfo_serial_port\": \"" + sa.deviceIdentity.getSerialPort() + "\"," +
+                        "\"deviceinfo_driver\": \"" + sa.deviceIdentity.getDriver() + "\"," +
+                        "\"deviceinfo_manufacturer\": \"" + sa.deviceIdentity.getManufacturer() + "\"," +
+                        "\"deviceinfo_model\": \"" + sa.deviceIdentity.getModel() + "\"," +
+                        "\"deviceinfo_serial_number\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
+                        "\"deviceinfo_operating_system\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"," +
+                        "\"data_type\": \"sample\"," +
+                        "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
+                        "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
+                        "\"data_frequency\": \"" + sa.frequency + "\", " +
+                        "\"data_rosetta_code\": \"" + sa.rosettaCode + "\", " +
+                        "\"data_metric_id\": \"" + sa.metricId + "\", " +
+                        "\"data_vendor_metric_id\": \"" + sa.vendorMetricId + "\", " +
+                        "\"data_instance_id\": \"" + sa.instanceId + "\", " +
+                        "\"data_values\": [" + valuesStrBuffer.toString() + "]" + "\", " +
+                        "\"data_timestamps_nano\": [" + timestampsStrBuffer.toString() + "]" +
+                        "}");
+            }
+            return result;
         } else if(data instanceof Numeric) {
             Numeric nu = (Numeric) data;
-            return "{" +
-                      "\"device_info\": {" +
-                        "\"site\": \"" + nu.deviceIdentity.getSite() + "\"," +
-                        "\"service\": \"" + nu.deviceIdentity.getService() + "\"," +
-                        "\"sector\": \"" + nu.deviceIdentity.getSector() + "\"," +
-                        "\"room\": \"" + nu.deviceIdentity.getRoom() + "\"," +
-                        "\"alias\": \"" + nu.deviceIdentity.getAlias() + "\"," +
-                        "\"serialPort\": \"" + nu.deviceIdentity.getSerialPort() + "\"," +
-                        "\"driver\": \"" + nu.deviceIdentity.getDriver() + "\"," +
-                        "\"manufacturer\": \"" + nu.deviceIdentity.getManufacturer() + "\"," +
-                        "\"model\": \"" + nu.deviceIdentity.getModel() + "\"," +
-                        "\"serialNumber\": \"" + nu.deviceIdentity.getSerialNumber() + "\"," +
-                        "\"operatingSystem\": \"" + nu.deviceIdentity.getOperatingSystem() + "\"" +
-                      "}," +
+            result.add("{" +
+                      "\"deviceinfo_site\": \"" + nu.deviceIdentity.getSite() + "\"," +
+                      "\"deviceinfo_service\": \"" + nu.deviceIdentity.getService() + "\"," +
+                      "\"deviceinfo_sector\": \"" + nu.deviceIdentity.getSector() + "\"," +
+                      "\"deviceinfo_room\": \"" + nu.deviceIdentity.getRoom() + "\"," +
+                      "\"deviceinfo_alias\": \"" + nu.deviceIdentity.getAlias() + "\"," +
+                      "\"deviceinfo_serial_port\": \"" + nu.deviceIdentity.getSerialPort() + "\"," +
+                      "\"deviceinfo_driver\": \"" + nu.deviceIdentity.getDriver() + "\"," +
+                      "\"deviceinfo_manufacturer\": \"" + nu.deviceIdentity.getManufacturer() + "\"," +
+                      "\"deviceinfo_model\": \"" + nu.deviceIdentity.getModel() + "\"," +
+                      "\"deviceinfo_serial_number\": \"" + nu.deviceIdentity.getSerialNumber() + "\"," +
+                      "\"deviceinfo_operating_system\": \"" + nu.deviceIdentity.getOperatingSystem() + "\"," +
                       "\"data_type\": \"numeric\"," +
-                      "\"data\": {" +
-                        "\"presentationTime\": " + nu.presentationTime.timestampMilli() + "," +
-                        "\"deviceTime\": " + nu.deviceTime.timestampMilli() + "," +
-                        "\"rosetta_code\": \"" + nu.rosettaCode + "\"," +
-                        "\"metric_id\": \"" + nu.metricId + "\"," +
-                        "\"vendor_metric_id\": \"" + nu.vendorMetricId + "\"," +
-                        "\"instance_id\": \"" + nu.instanceId + "\"," +
-                        "\"value\": " + nu.value +
-                      "}" +
-                    "}";
+                      "\"data_presentation_time\": " + nu.presentationTime.timestampMilli() + "," +
+                      "\"data_device_time\": " + nu.deviceTime.timestampMilli() + "," +
+                      "\"data_rosetta_code\": \"" + nu.rosettaCode + "\"," +
+                      "\"data_metric_id\": \"" + nu.metricId + "\"," +
+                      "\"data_vendor_metric_id\": \"" + nu.vendorMetricId + "\"," +
+                      "\"data_instance_id\": \"" + nu.instanceId + "\"," +
+                      "\"data_value\": " + nu.value +
+                    "}");
+            return result;
         }
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
