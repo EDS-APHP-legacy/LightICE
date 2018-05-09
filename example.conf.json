@@ -33,7 +33,8 @@
     },
     {
       "type": "stdout",
-      "serializer": "json"
+      "serializer": "json",
+      "serializer_flat": false,
     }
   ],
   "servers": [
