@@ -159,7 +159,7 @@ public abstract class AbstractDeviceRunner {
     private final Set<String> oldPatientAlertInstances = new HashSet<String>();
     private final Set<String> oldTechnicalAlertInstances = new HashSet<String>();*/
 
-    protected InstanceHolder<SampleArray> createSampleArrayInstance(String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, int frequency) {
+    protected InstanceHolder<SampleArray> createSampleArrayInstance(String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency) {
         if (deviceIdentity == null || deviceIdentity.getUniqueDeviceIdentifier() == null || "".equals(deviceIdentity.getUniqueDeviceIdentifier())) {
             throw new IllegalStateException("Please populate deviceIdentity.unique_device_identifier before calling createSampleArrayInstance");
         }
@@ -167,10 +167,10 @@ public abstract class AbstractDeviceRunner {
         InstanceHolder<SampleArray> holder = new InstanceHolder<SampleArray>();
         holder.data = new SampleArray();
         holder.data.deviceIdentity = deviceIdentity;
-        holder.data.metricId = metric_id;
-        holder.data.vendorMetricId = vendor_metric_id;
+        holder.data.rosettaMetric = rosettaMetric;
+        holder.data.vendorMetric = vendor_rosettaMetric;
         holder.data.instanceId = instance_id;
-        holder.data.rosettaCode = rosettaCode;
+        holder.data.rosettaUnit = rosettaUnit;
         holder.data.frequency = frequency;
 
         holder.handle = null;
@@ -193,14 +193,14 @@ public abstract class AbstractDeviceRunner {
     }
 
     private InstanceHolder<SampleArray> ensureHolderConsistency(InstanceHolder<SampleArray> holder,
-                                                                String metric_id, String vendor_metric_id, int instance_id,
-                                                                String rosettaCode, int frequency) {
+                                                                String rosettaMetric, String vendor_rosettaMetric, int instance_id,
+                                                                String rosettaUnit, int frequency) {
 
-        if (null != holder && (!holder.data.metricId.equals(metric_id) ||
-                !holder.data.vendorMetricId.equals(vendor_metric_id) ||
+        if (null != holder && (!holder.data.rosettaMetric.equals(rosettaMetric) ||
+                !holder.data.vendorMetric.equals(vendor_rosettaMetric) ||
                 holder.data.instanceId != instance_id ||
                 holder.data.frequency != frequency ||
-                !holder.data.rosettaCode.equals(rosettaCode))) {
+                !holder.data.rosettaUnit.equals(rosettaUnit))) {
 
             unregisterSampleArrayInstance(holder);
             holder = null;
@@ -210,46 +210,46 @@ public abstract class AbstractDeviceRunner {
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                             Number[] newValues,
-                                                            String metric_id, String vendor_metric_id, String rosettaCode, int frequency,
+                                                            String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, int frequency,
                                                             DeviceClock.Reading timestamp) {
-        return sampleArraySample(holder, newValues, metric_id, vendor_metric_id, 0, rosettaCode, frequency, timestamp);
+        return sampleArraySample(holder, newValues, rosettaMetric, vendor_rosettaMetric, 0, rosettaUnit, frequency, timestamp);
     }
 
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Number[] newValues, int len,
-                                                                String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, int frequency,
+                                                                String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
                                                                 DeviceClock.Reading timestamp) {
-        return sampleArraySample(holder, new ArrayContainer<>(newValues, len), metric_id, vendor_metric_id, instance_id, rosettaCode, frequency, timestamp);
+        return sampleArraySample(holder, new ArrayContainer<>(newValues, len), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Number[] newValues,
-                                                                String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, int frequency,
+                                                                String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
                                                                 DeviceClock.Reading timestamp) {
-        return sampleArraySample(holder, new ArrayContainer<>(newValues), metric_id, vendor_metric_id, instance_id, rosettaCode, frequency, timestamp);
+        return sampleArraySample(holder, new ArrayContainer<>(newValues), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Collection<Number> newValues,
-                                                                String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, int frequency,
+                                                                String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
                                                                 DeviceClock.Reading timestamp) {
-        return sampleArraySample(holder, new CollectionContainer<>(newValues), metric_id, vendor_metric_id, instance_id, rosettaCode, frequency, timestamp);
+        return sampleArraySample(holder, new CollectionContainer<>(newValues), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     private InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                           NullSaveContainer<Number> newValues,
-                                                          String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, int frequency,
+                                                          String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
                                                           DeviceClock.Reading timestamp) {
 
-        holder = ensureHolderConsistency(holder, metric_id, vendor_metric_id, instance_id, rosettaCode, frequency);
+        holder = ensureHolderConsistency(holder, rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency);
 
         if (!newValues.isNull()) {
             // Call this now so that resolution of instance registration timestamp
             // is reduced
             timestamp = timestamp.refineResolutionForFrequency(frequency, newValues.size());
             if (null == holder) {
-                holder = createSampleArrayInstance(metric_id, vendor_metric_id, instance_id, rosettaCode, frequency);
+                holder = createSampleArrayInstance(rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency);
             }
             sampleArraySample(holder.data, newValues, timestamp);
         } else {
@@ -273,15 +273,15 @@ public abstract class AbstractDeviceRunner {
         publish(data, deviceTimestamp);
     }
 
-    protected InstanceHolder<Numeric> createNumericInstance(String metric_id, String vendor_metric_id) {
-        return createNumericInstance(metric_id, vendor_metric_id, 0);
+    protected InstanceHolder<Numeric> createNumericInstance(String rosettaMetric, String vendor_rosettaMetric) {
+        return createNumericInstance(rosettaMetric, vendor_rosettaMetric, 0);
     }
 
-    protected InstanceHolder<Numeric> createNumericInstance(String metric_id, String vendor_metric_id, int instance_id) {
-        return createNumericInstance(metric_id, vendor_metric_id, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE);
+    protected InstanceHolder<Numeric> createNumericInstance(String rosettaMetric, String vendor_rosettaMetric, int instance_id) {
+        return createNumericInstance(rosettaMetric, vendor_rosettaMetric, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE);
     }
 
-    protected InstanceHolder<Numeric> createNumericInstance(String metric_id, String vendor_metric_id, int instance_id, String rosettaCode) {
+    protected InstanceHolder<Numeric> createNumericInstance(String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit) {
         if (deviceIdentity == null || deviceIdentity.getUniqueDeviceIdentifier() == null || "".equals(deviceIdentity.getUniqueDeviceIdentifier())) {
             throw new IllegalStateException("Please populate deviceIdentity.unique_device_identifier before calling createNumericInstance");
         }
@@ -289,10 +289,10 @@ public abstract class AbstractDeviceRunner {
         InstanceHolder<Numeric> holder = new InstanceHolder<Numeric>();
         holder.data = new Numeric();
         holder.data.deviceIdentity = deviceIdentity;
-        holder.data.metricId = metric_id;
-        holder.data.vendorMetricId = vendor_metric_id;
+        holder.data.rosettaMetric = rosettaMetric;
+        holder.data.vendorMetric = vendor_rosettaMetric;
         holder.data.instanceId = instance_id;
-        holder.data.rosettaCode = rosettaCode;
+        holder.data.rosettaUnit = rosettaUnit;
 
         holder.handle = null;
         //holder.handler = numericDataWriter.register_instance(holder.data);
@@ -309,26 +309,26 @@ public abstract class AbstractDeviceRunner {
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String metric_id, String vendor_metric_id, String rosettaCode, DeviceClock.Reading time) {
-        return numericSample(holder, null == newValue ? null : newValue.floatValue(), metric_id, vendor_metric_id, rosettaCode, time);
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, DeviceClock.Reading time) {
+        return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, rosettaUnit, time);
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String metric_id, String vendor_metric_id, int instance_id, DeviceClock.Reading time) {
-        return numericSample(holder, null == newValue ? null : newValue.floatValue(), metric_id, vendor_metric_id, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, DeviceClock.Reading time) {
+        return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, DeviceClock.Reading time) {
-        return numericSample(holder, null == newValue ? null : newValue.floatValue(), metric_id, vendor_metric_id, instance_id, rosettaCode, time);
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, DeviceClock.Reading time) {
+        return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, time);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String metric_id, String vendor_metric_id, String rosettaCode, DeviceClock.Reading time) {
-        return numericSample(holder, newValue, metric_id, vendor_metric_id, 0, rosettaCode, time);
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, DeviceClock.Reading time) {
+        return numericSample(holder, newValue, rosettaMetric, vendor_rosettaMetric, 0, rosettaUnit, time);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String metric_id, String vendor_metric_id, int instance_id, DeviceClock.Reading time) {
-        return numericSample(holder, newValue, metric_id, vendor_metric_id, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, DeviceClock.Reading time) {
+        return numericSample(holder, newValue, rosettaMetric, vendor_rosettaMetric, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
     }
 
     protected void numericSample(Numeric numeric, float newValue, DeviceClock.Reading deviceTimestamp) {
@@ -348,15 +348,15 @@ public abstract class AbstractDeviceRunner {
         //numericDataWriter.write(holder.data, holder.handler);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String metric_id, String vendor_metric_id, int instance_id, String rosettaCode, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, DeviceClock.Reading time) {
 
-        if (holder != null && (!holder.data.metricId.equals(metric_id) || !holder.data.vendorMetricId.equals(vendor_metric_id) || holder.data.instanceId != instance_id || !holder.data.rosettaCode.equals(rosettaCode))) {
+        if (holder != null && (!holder.data.rosettaMetric.equals(rosettaMetric) || !holder.data.vendorMetric.equals(vendor_rosettaMetric) || holder.data.instanceId != instance_id || !holder.data.rosettaUnit.equals(rosettaUnit))) {
             unregisterNumericInstance(holder);
             holder = null;
         }
         if (null != newValue) {
             if (null == holder) {
-                holder = createNumericInstance(metric_id, vendor_metric_id, instance_id, rosettaCode);
+                holder = createNumericInstance(rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit);
             }
             numericSample(holder.data, newValue, time);
         } else {

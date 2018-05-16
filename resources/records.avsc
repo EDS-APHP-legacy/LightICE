@@ -5,15 +5,15 @@
         "name": "DataSingle",
         "fields": [
             {
-                "name": "rosettaCode",
+                "name": "rosettaUnit",
                 "type": "string"
             },
             {
-                "name": "metricId",
+                "name": "rosettaMetric",
                 "type": "string"
             },
             {
-                "name": "vendorMetricId",
+                "name": "vendorMetric",
                 "type": "string"
             },
             {
@@ -40,15 +40,15 @@
                 "type": "float"
             },
             {
-                "name": "rosettaCode",
+                "name": "rosettaUnit",
                 "type": "string"
             },
             {
-                "name": "metricId",
+                "name": "rosettaMetric",
                 "type": "string"
             },
             {
-                "name": "vendorMetricId",
+                "name": "vendorMetric",
                 "type": "string"
             },
             {

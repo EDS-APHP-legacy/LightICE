@@ -42,12 +42,12 @@ public class JsonSerializer extends Serializer {
                             "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
                             "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
                             "\"data_frequency\": \"" + sa.frequency + "\", " +
-                            "\"data_rosetta_code\": \"" + sa.rosettaCode + "\", " +
-                            "\"data_metric_id\": \"" + sa.metricId + "\", " +
-                            "\"data_vendor_metric_id\": \"" + sa.vendorMetricId + "\", " +
-                            "\"data_instance_id\": \"" + sa.instanceId + "\", " +
-                            "\"data_value\": [" + values[i] + "]" + "\", " +
-                            "\"data_timestamp_nano\": [" + timestampsNano[i] + "]" +
+                            "\"data_rosetta_metric\": \"" + sa.rosettaMetric + "\", " +
+                            "\"data_rosetta_unit\": \"" + sa.rosettaUnit + "\", " +
+                            "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
+                            "\"data_instance\": \"" + sa.instanceId + "\", " +
+                            "\"data_value\": " + values[i] + ", " +
+                            "\"data_timestamp_nano\": " + timestampsNano[i] +
                             "}");
                 }
             }
@@ -81,11 +81,11 @@ public class JsonSerializer extends Serializer {
                         "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
                         "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
                         "\"data_frequency\": \"" + sa.frequency + "\", " +
-                        "\"data_rosetta_code\": \"" + sa.rosettaCode + "\", " +
-                        "\"data_metric_id\": \"" + sa.metricId + "\", " +
-                        "\"data_vendor_metric_id\": \"" + sa.vendorMetricId + "\", " +
-                        "\"data_instance_id\": \"" + sa.instanceId + "\", " +
-                        "\"data_values\": [" + valuesStrBuffer.toString() + "]" + "\", " +
+                        "\"data_rosetta_metric\": \"" + sa.rosettaMetric + "\", " +
+                        "\"data_rosetta_unit\": \"" + sa.rosettaUnit + "\", " +
+                        "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
+                        "\"data_instance\": \"" + sa.instanceId + "\", " +
+                        "\"data_values\": [" + valuesStrBuffer.toString() + "], " +
                         "\"data_timestamps_nano\": [" + timestampsStrBuffer.toString() + "]" +
                         "}");
             }
@@ -107,10 +107,10 @@ public class JsonSerializer extends Serializer {
                       "\"data_type\": \"numeric\"," +
                       "\"data_presentation_time\": " + nu.presentationTime.timestampMilli() + "," +
                       "\"data_device_time\": " + nu.deviceTime.timestampMilli() + "," +
-                      "\"data_rosetta_code\": \"" + nu.rosettaCode + "\"," +
-                      "\"data_metric_id\": \"" + nu.metricId + "\"," +
-                      "\"data_vendor_metric_id\": \"" + nu.vendorMetricId + "\"," +
-                      "\"data_instance_id\": \"" + nu.instanceId + "\"," +
+                      "\"data_rosetta_metric\": \"" + nu.rosettaMetric + "\", " +
+                      "\"data_rosetta_unit\": \"" + nu.rosettaUnit + "\", " +
+                      "\"data_vendor_metric\": \"" + nu.vendorMetric + "\", " +
+                      "\"data_instance\": \"" + nu.instanceId + "\", " +
                       "\"data_value\": " + nu.value +
                     "}");
             return result;

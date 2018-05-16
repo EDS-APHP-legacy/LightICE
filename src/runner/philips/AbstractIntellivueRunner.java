@@ -73,8 +73,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     private ScheduledFuture<?> emitFastData;
 
     // Terminology mapping
-    protected final Map<ObservedValue, String> numericMetricIds = new HashMap<>();
-    protected final Map<ObservedValue, String> sampleArrayMetricIds = new HashMap<>();
+    protected final Map<ObservedValue, String> numericRosettaMetrics = new HashMap<>();
+    protected final Map<ObservedValue, String> sampleArrayRosettaMetrics = new HashMap<>();
     protected final Map<ObservedValue, Label> numericLabels = new HashMap<>();
     protected final Map<ObservedValue, Label> sampleArrayLabels = new HashMap<>();
 
@@ -102,7 +102,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
     public AbstractIntellivueRunner(DeviceIdentity deviceIdentity) throws IOException {
         super(deviceIdentity); // initializes the networkloop
-        loadMap(numericMetricIds, numericLabels, sampleArrayMetricIds, sampleArrayLabels);
+        loadMap(numericRosettaMetrics, numericLabels, sampleArrayRosettaMetrics, sampleArrayLabels);
 
         this.intellivue = new IntellivueExt(new DeviceClock.WallClock());
 
@@ -364,7 +364,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
                         if(null != holder) {
                             synchronized(sampleCache) {
-                                Collection<Number> c = sampleCache.emitSamples(samples, holder.data.metricId +" "+holder.data.instanceId);
+                                Collection<Number> c = sampleCache.emitSamples(samples, holder.data.rosettaMetric +" "+holder.data.instanceId);
                                 if(null == c) {
                                     putSampleArrayUpdate(ov, handle, null);
                                 } else {
@@ -372,14 +372,16 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                                 }
                             }
                         } else {
-                            String metric_id = sampleArrayMetricIds.get(ov);
+                            String rosettaMetric = sampleArrayRosettaMetrics.get(ov);
+                            if (rosettaMetric == null)
+                                rosettaMetric = "";
                             UnitCode unitCode = handleToUnitCode.get(handle);
                             synchronized(sampleCache) {
                                 putSampleArrayUpdate(
                                         ov, handle,
-                                        sampleArraySample(getSampleArrayUpdate(ov, handle), sampleCache.emitSamples(samples, metric_id+" "+handle),
-                                                metric_id, ov.toString(), handle,
-                                                RosettaUnits.units(unitCode),
+                                        sampleArraySample(getSampleArrayUpdate(ov, handle), sampleCache.emitSamples(samples, rosettaMetric+" "+handle),
+                                                rosettaMetric, ov.toString(), handle,
+                                                PhilipsToRosettaMapping.units(unitCode),
                                                 (int)(1000L / rt.toMilliseconds()), fakeSampleTime));
                             }
                         }
@@ -790,15 +792,15 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             // log.debug(observed.toString());
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
-                String metricId = numericMetricIds.get(ov);
-                if (null != metricId) {
+                String rosettaMetric = numericRosettaMetrics.get(ov);
+                if (null != rosettaMetric) {
 
                     UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
 
                     if (observed.getMsmtState().isUnavailable())
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, metricId, ov.toString(), handle, RosettaUnits.units(unit), deviceSampleTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceSampleTime));
                     else
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), metricId, ov.toString(), handle, RosettaUnits.units(unit), deviceSampleTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceSampleTime));
 
                 } else {
                     log.debug("Unknown numeric:" + observed);
@@ -837,9 +839,9 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             if (null == ov) {
                 log.warn("No ObservedValue for " + saov.getPhysioId().getType());
             } else {
-                String metricId = sampleArrayMetricIds.get(ov);
-                if (null == metricId) {
-                    log.warn("No metricId for " + ov);
+                String rosettaMetric = sampleArrayRosettaMetrics.get(ov);
+                if (null == rosettaMetric) {
+                    log.warn("No rosettaMetric for " + ov);
                 } else {
                     SampleArraySpecification sampleArraySpecification = handleToSampleArraySpecification.get(handle);
                     ScaleAndRangeSpecification scaleAndRangeSpecification = handleToScaleAndRangeSpecification.get(handle);
@@ -922,12 +924,13 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     }
 
 
-    static void loadMap(Map<ObservedValue, String> numericMetricIds,
+    static void loadMap(Map<ObservedValue, String> numericrosettaMetrics,
                         Map<ObservedValue, Label> numericLabels,
-                        Map<ObservedValue, String> sampleArrayMetricIds,
+                        Map<ObservedValue, String> sampleArrayrosettaMetrics,
                         Map<ObservedValue, Label> sampleArrayLabels) {
         try {
-            String map = "NOM_VOL_MINUTE_AWAY\tMDC_VOL_MINUTE_AWAY\tNLS_NOM_VOL_MINUTE_AWAY\tN\n" +
+            String map =
+                    "NOM_VOL_MINUTE_AWAY\tMDC_VOL_MINUTE_AWAY\tNLS_NOM_VOL_MINUTE_AWAY\tN\n" +
                     "NOM_VOL_AWAY_TIDAL\tMDC_VOL_AWAY_TIDAL\tNLS_NOM_VOL_AWAY_TIDAL\tN\n" +
                     "NOM_VENT_RESP_RATE\tMDC_VENT_RESP_RATE\tNLS_NOM_VENT_RESP_RATE\tN\n" +
                     "NOM_AWAY_RESP_RATE\tMDC_AWAY_RESP_RATE\tNLS_NOM_AWAY_RESP_RATE\tN\n" +
@@ -972,17 +975,17 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                         log.debug("Bad line:" + line);
                     } else {
                         ObservedValue ov = ObservedValue.valueOf(v[0]);
-                        String metric_id = v[1];
+                        String rosettaMetric = v[1];
                         Label label = Label.valueOf(v[2]);
 
-                        log.trace("Adding " + ov + " mapped to " + metric_id + " with label " + label);
+                        log.trace("Adding " + ov + " mapped to " + rosettaMetric + " with label " + label);
                         v[3] = v[3].trim();
                         if ("W".equals(v[3])) {
                             sampleArrayLabels.put(ov, label);
-                            sampleArrayMetricIds.put(ov, metric_id);
+                            sampleArrayrosettaMetrics.put(ov, rosettaMetric);
                         } else if ("N".equals(v[3])) {
                             numericLabels.put(ov, label);
-                            numericMetricIds.put(ov, metric_id);
+                            numericrosettaMetrics.put(ov, rosettaMetric);
                         }
                     }
                 }

@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class DataSingle extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 6299991895809913675L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DataSingle\",\"namespace\":\"export.serializers.avro\",\"fields\":[{\"name\":\"rosettaCode\",\"type\":\"string\"},{\"name\":\"metricId\",\"type\":\"string\"},{\"name\":\"vendorMetricId\",\"type\":\"string\"},{\"name\":\"instanceId\",\"type\":\"int\"},{\"name\":\"value\",\"type\":\"float\"},{\"name\":\"timestampNano\",\"type\":\"long\"}]}");
+  private static final long serialVersionUID = -5479125223938544970L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DataSingle\",\"namespace\":\"export.serializers.avro\",\"fields\":[{\"name\":\"rosettaUnit\",\"type\":\"string\"},{\"name\":\"rosettaMetric\",\"type\":\"string\"},{\"name\":\"vendorMetric\",\"type\":\"string\"},{\"name\":\"instanceId\",\"type\":\"int\"},{\"name\":\"value\",\"type\":\"float\"},{\"name\":\"timestampNano\",\"type\":\"long\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -51,9 +51,9 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
     return DECODER.decode(b);
   }
 
-  @Deprecated public java.lang.CharSequence rosettaCode;
-  @Deprecated public java.lang.CharSequence metricId;
-  @Deprecated public java.lang.CharSequence vendorMetricId;
+  @Deprecated public java.lang.CharSequence rosettaUnit;
+  @Deprecated public java.lang.CharSequence rosettaMetric;
+  @Deprecated public java.lang.CharSequence vendorMetric;
   @Deprecated public int instanceId;
   @Deprecated public float value;
   @Deprecated public long timestampNano;
@@ -67,17 +67,17 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
 
   /**
    * All-args constructor.
-   * @param rosettaCode The new value for rosettaCode
-   * @param metricId The new value for metricId
-   * @param vendorMetricId The new value for vendorMetricId
+   * @param rosettaUnit The new value for rosettaUnit
+   * @param rosettaMetric The new value for rosettaMetric
+   * @param vendorMetric The new value for vendorMetric
    * @param instanceId The new value for instanceId
    * @param value The new value for value
    * @param timestampNano The new value for timestampNano
    */
-  public DataSingle(java.lang.CharSequence rosettaCode, java.lang.CharSequence metricId, java.lang.CharSequence vendorMetricId, java.lang.Integer instanceId, java.lang.Float value, java.lang.Long timestampNano) {
-    this.rosettaCode = rosettaCode;
-    this.metricId = metricId;
-    this.vendorMetricId = vendorMetricId;
+  public DataSingle(java.lang.CharSequence rosettaUnit, java.lang.CharSequence rosettaMetric, java.lang.CharSequence vendorMetric, java.lang.Integer instanceId, java.lang.Float value, java.lang.Long timestampNano) {
+    this.rosettaUnit = rosettaUnit;
+    this.rosettaMetric = rosettaMetric;
+    this.vendorMetric = vendorMetric;
     this.instanceId = instanceId;
     this.value = value;
     this.timestampNano = timestampNano;
@@ -87,9 +87,9 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
   // Used by DatumWriter.  Applications should not call.
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return rosettaCode;
-    case 1: return metricId;
-    case 2: return vendorMetricId;
+    case 0: return rosettaUnit;
+    case 1: return rosettaMetric;
+    case 2: return vendorMetric;
     case 3: return instanceId;
     case 4: return value;
     case 5: return timestampNano;
@@ -101,9 +101,9 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: rosettaCode = (java.lang.CharSequence)value$; break;
-    case 1: metricId = (java.lang.CharSequence)value$; break;
-    case 2: vendorMetricId = (java.lang.CharSequence)value$; break;
+    case 0: rosettaUnit = (java.lang.CharSequence)value$; break;
+    case 1: rosettaMetric = (java.lang.CharSequence)value$; break;
+    case 2: vendorMetric = (java.lang.CharSequence)value$; break;
     case 3: instanceId = (java.lang.Integer)value$; break;
     case 4: value = (java.lang.Float)value$; break;
     case 5: timestampNano = (java.lang.Long)value$; break;
@@ -112,51 +112,51 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
   }
 
   /**
-   * Gets the value of the 'rosettaCode' field.
-   * @return The value of the 'rosettaCode' field.
+   * Gets the value of the 'rosettaUnit' field.
+   * @return The value of the 'rosettaUnit' field.
    */
-  public java.lang.CharSequence getRosettaCode() {
-    return rosettaCode;
+  public java.lang.CharSequence getRosettaUnit() {
+    return rosettaUnit;
   }
 
   /**
-   * Sets the value of the 'rosettaCode' field.
+   * Sets the value of the 'rosettaUnit' field.
    * @param value the value to set.
    */
-  public void setRosettaCode(java.lang.CharSequence value) {
-    this.rosettaCode = value;
+  public void setRosettaUnit(java.lang.CharSequence value) {
+    this.rosettaUnit = value;
   }
 
   /**
-   * Gets the value of the 'metricId' field.
-   * @return The value of the 'metricId' field.
+   * Gets the value of the 'rosettaMetric' field.
+   * @return The value of the 'rosettaMetric' field.
    */
-  public java.lang.CharSequence getMetricId() {
-    return metricId;
+  public java.lang.CharSequence getRosettaMetric() {
+    return rosettaMetric;
   }
 
   /**
-   * Sets the value of the 'metricId' field.
+   * Sets the value of the 'rosettaMetric' field.
    * @param value the value to set.
    */
-  public void setMetricId(java.lang.CharSequence value) {
-    this.metricId = value;
+  public void setRosettaMetric(java.lang.CharSequence value) {
+    this.rosettaMetric = value;
   }
 
   /**
-   * Gets the value of the 'vendorMetricId' field.
-   * @return The value of the 'vendorMetricId' field.
+   * Gets the value of the 'vendorMetric' field.
+   * @return The value of the 'vendorMetric' field.
    */
-  public java.lang.CharSequence getVendorMetricId() {
-    return vendorMetricId;
+  public java.lang.CharSequence getVendorMetric() {
+    return vendorMetric;
   }
 
   /**
-   * Sets the value of the 'vendorMetricId' field.
+   * Sets the value of the 'vendorMetric' field.
    * @param value the value to set.
    */
-  public void setVendorMetricId(java.lang.CharSequence value) {
-    this.vendorMetricId = value;
+  public void setVendorMetric(java.lang.CharSequence value) {
+    this.vendorMetric = value;
   }
 
   /**
@@ -239,9 +239,9 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<DataSingle>
     implements org.apache.avro.data.RecordBuilder<DataSingle> {
 
-    private java.lang.CharSequence rosettaCode;
-    private java.lang.CharSequence metricId;
-    private java.lang.CharSequence vendorMetricId;
+    private java.lang.CharSequence rosettaUnit;
+    private java.lang.CharSequence rosettaMetric;
+    private java.lang.CharSequence vendorMetric;
     private int instanceId;
     private float value;
     private long timestampNano;
@@ -257,16 +257,16 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
      */
     private Builder(export.serializers.avro.DataSingle.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.rosettaCode)) {
-        this.rosettaCode = data().deepCopy(fields()[0].schema(), other.rosettaCode);
+      if (isValidValue(fields()[0], other.rosettaUnit)) {
+        this.rosettaUnit = data().deepCopy(fields()[0].schema(), other.rosettaUnit);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.metricId)) {
-        this.metricId = data().deepCopy(fields()[1].schema(), other.metricId);
+      if (isValidValue(fields()[1], other.rosettaMetric)) {
+        this.rosettaMetric = data().deepCopy(fields()[1].schema(), other.rosettaMetric);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.vendorMetricId)) {
-        this.vendorMetricId = data().deepCopy(fields()[2].schema(), other.vendorMetricId);
+      if (isValidValue(fields()[2], other.vendorMetric)) {
+        this.vendorMetric = data().deepCopy(fields()[2].schema(), other.vendorMetric);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.instanceId)) {
@@ -289,16 +289,16 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
      */
     private Builder(export.serializers.avro.DataSingle other) {
             super(SCHEMA$);
-      if (isValidValue(fields()[0], other.rosettaCode)) {
-        this.rosettaCode = data().deepCopy(fields()[0].schema(), other.rosettaCode);
+      if (isValidValue(fields()[0], other.rosettaUnit)) {
+        this.rosettaUnit = data().deepCopy(fields()[0].schema(), other.rosettaUnit);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.metricId)) {
-        this.metricId = data().deepCopy(fields()[1].schema(), other.metricId);
+      if (isValidValue(fields()[1], other.rosettaMetric)) {
+        this.rosettaMetric = data().deepCopy(fields()[1].schema(), other.rosettaMetric);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.vendorMetricId)) {
-        this.vendorMetricId = data().deepCopy(fields()[2].schema(), other.vendorMetricId);
+      if (isValidValue(fields()[2], other.vendorMetric)) {
+        this.vendorMetric = data().deepCopy(fields()[2].schema(), other.vendorMetric);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.instanceId)) {
@@ -316,118 +316,118 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
     }
 
     /**
-      * Gets the value of the 'rosettaCode' field.
+      * Gets the value of the 'rosettaUnit' field.
       * @return The value.
       */
-    public java.lang.CharSequence getRosettaCode() {
-      return rosettaCode;
+    public java.lang.CharSequence getRosettaUnit() {
+      return rosettaUnit;
     }
 
     /**
-      * Sets the value of the 'rosettaCode' field.
-      * @param value The value of 'rosettaCode'.
+      * Sets the value of the 'rosettaUnit' field.
+      * @param value The value of 'rosettaUnit'.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder setRosettaCode(java.lang.CharSequence value) {
+    public export.serializers.avro.DataSingle.Builder setRosettaUnit(java.lang.CharSequence value) {
       validate(fields()[0], value);
-      this.rosettaCode = value;
+      this.rosettaUnit = value;
       fieldSetFlags()[0] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'rosettaCode' field has been set.
-      * @return True if the 'rosettaCode' field has been set, false otherwise.
+      * Checks whether the 'rosettaUnit' field has been set.
+      * @return True if the 'rosettaUnit' field has been set, false otherwise.
       */
-    public boolean hasRosettaCode() {
+    public boolean hasRosettaUnit() {
       return fieldSetFlags()[0];
     }
 
 
     /**
-      * Clears the value of the 'rosettaCode' field.
+      * Clears the value of the 'rosettaUnit' field.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder clearRosettaCode() {
-      rosettaCode = null;
+    public export.serializers.avro.DataSingle.Builder clearRosettaUnit() {
+      rosettaUnit = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
     /**
-      * Gets the value of the 'metricId' field.
+      * Gets the value of the 'rosettaMetric' field.
       * @return The value.
       */
-    public java.lang.CharSequence getMetricId() {
-      return metricId;
+    public java.lang.CharSequence getRosettaMetric() {
+      return rosettaMetric;
     }
 
     /**
-      * Sets the value of the 'metricId' field.
-      * @param value The value of 'metricId'.
+      * Sets the value of the 'rosettaMetric' field.
+      * @param value The value of 'rosettaMetric'.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder setMetricId(java.lang.CharSequence value) {
+    public export.serializers.avro.DataSingle.Builder setRosettaMetric(java.lang.CharSequence value) {
       validate(fields()[1], value);
-      this.metricId = value;
+      this.rosettaMetric = value;
       fieldSetFlags()[1] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'metricId' field has been set.
-      * @return True if the 'metricId' field has been set, false otherwise.
+      * Checks whether the 'rosettaMetric' field has been set.
+      * @return True if the 'rosettaMetric' field has been set, false otherwise.
       */
-    public boolean hasMetricId() {
+    public boolean hasRosettaMetric() {
       return fieldSetFlags()[1];
     }
 
 
     /**
-      * Clears the value of the 'metricId' field.
+      * Clears the value of the 'rosettaMetric' field.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder clearMetricId() {
-      metricId = null;
+    public export.serializers.avro.DataSingle.Builder clearRosettaMetric() {
+      rosettaMetric = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
     /**
-      * Gets the value of the 'vendorMetricId' field.
+      * Gets the value of the 'vendorMetric' field.
       * @return The value.
       */
-    public java.lang.CharSequence getVendorMetricId() {
-      return vendorMetricId;
+    public java.lang.CharSequence getVendorMetric() {
+      return vendorMetric;
     }
 
     /**
-      * Sets the value of the 'vendorMetricId' field.
-      * @param value The value of 'vendorMetricId'.
+      * Sets the value of the 'vendorMetric' field.
+      * @param value The value of 'vendorMetric'.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder setVendorMetricId(java.lang.CharSequence value) {
+    public export.serializers.avro.DataSingle.Builder setVendorMetric(java.lang.CharSequence value) {
       validate(fields()[2], value);
-      this.vendorMetricId = value;
+      this.vendorMetric = value;
       fieldSetFlags()[2] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'vendorMetricId' field has been set.
-      * @return True if the 'vendorMetricId' field has been set, false otherwise.
+      * Checks whether the 'vendorMetric' field has been set.
+      * @return True if the 'vendorMetric' field has been set, false otherwise.
       */
-    public boolean hasVendorMetricId() {
+    public boolean hasVendorMetric() {
       return fieldSetFlags()[2];
     }
 
 
     /**
-      * Clears the value of the 'vendorMetricId' field.
+      * Clears the value of the 'vendorMetric' field.
       * @return This builder.
       */
-    public export.serializers.avro.DataSingle.Builder clearVendorMetricId() {
-      vendorMetricId = null;
+    public export.serializers.avro.DataSingle.Builder clearVendorMetric() {
+      vendorMetric = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -551,9 +551,9 @@ public class DataSingle extends org.apache.avro.specific.SpecificRecordBase impl
     public DataSingle build() {
       try {
         DataSingle record = new DataSingle();
-        record.rosettaCode = fieldSetFlags()[0] ? this.rosettaCode : (java.lang.CharSequence) defaultValue(fields()[0]);
-        record.metricId = fieldSetFlags()[1] ? this.metricId : (java.lang.CharSequence) defaultValue(fields()[1]);
-        record.vendorMetricId = fieldSetFlags()[2] ? this.vendorMetricId : (java.lang.CharSequence) defaultValue(fields()[2]);
+        record.rosettaUnit = fieldSetFlags()[0] ? this.rosettaUnit : (java.lang.CharSequence) defaultValue(fields()[0]);
+        record.rosettaMetric = fieldSetFlags()[1] ? this.rosettaMetric : (java.lang.CharSequence) defaultValue(fields()[1]);
+        record.vendorMetric = fieldSetFlags()[2] ? this.vendorMetric : (java.lang.CharSequence) defaultValue(fields()[2]);
         record.instanceId = fieldSetFlags()[3] ? this.instanceId : (java.lang.Integer) defaultValue(fields()[3]);
         record.value = fieldSetFlags()[4] ? this.value : (java.lang.Float) defaultValue(fields()[4]);
         record.timestampNano = fieldSetFlags()[5] ? this.timestampNano : (java.lang.Long) defaultValue(fields()[5]);

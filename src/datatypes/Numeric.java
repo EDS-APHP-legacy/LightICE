@@ -2,7 +2,6 @@ package datatypes;
 
 import common.DeviceIdentity;
 import ice.CdrHelper;
-import ice.Time_t;
 
 
 public class Numeric extends Data
@@ -14,10 +13,10 @@ public class Numeric extends Data
     public ice.Time_t deviceTime = (ice.Time_t) ice.Time_t.create();
     public ice.Time_t presentationTime = (ice.Time_t) ice.Time_t.create();
 
-    public String metricId = ""; /* maximum length = (64) */
-    public String vendorMetricId = ""; /* maximum length = (64) */
+    public String vendorMetric = ""; /* maximum length = (64) */
+    public String rosettaMetric = ""; /* maximum length = (64) */
+    public String rosettaUnit = ""; /* maximum length = (64) */
     public int instanceId = 0;
-    public String rosettaCode = ""; /* maximum length = (64) */
     public float value = 0;
 
 
@@ -53,11 +52,11 @@ public class Numeric extends Data
             return false;
         }
 
-        if(!metricId.equals(otherObj.metricId)) {
+        if(!rosettaMetric.equals(otherObj.rosettaMetric)) {
             return false;
         }
 
-        if(!vendorMetricId.equals(otherObj.vendorMetricId)) {
+        if(!vendorMetric.equals(otherObj.vendorMetric)) {
             return false;
         }
 
@@ -65,7 +64,7 @@ public class Numeric extends Data
             return false;
         }
 
-        if(!rosettaCode.equals(otherObj.rosettaCode)) {
+        if(!rosettaUnit.equals(otherObj.rosettaUnit)) {
             return false;
         }
 
@@ -99,13 +98,13 @@ public class Numeric extends Data
 
         __result += deviceIdentity.getUniqueDeviceIdentifier().hashCode();
 
-        __result += metricId.hashCode();
+        __result += rosettaMetric.hashCode();
 
-        __result += vendorMetricId.hashCode();
+        __result += vendorMetric.hashCode();
 
         __result += (int) instanceId;
 
-        __result += rosettaCode.hashCode();
+        __result += rosettaUnit.hashCode();
 
         __result += (int)value;
 
@@ -139,13 +138,13 @@ public class Numeric extends Data
 
         typedDst.deviceIdentity.setUniqueDeviceIdentifier(typedSrc.deviceIdentity.getUniqueDeviceIdentifier());
 
-        typedDst.metricId = typedSrc.metricId;
+        typedDst.rosettaMetric = typedSrc.rosettaMetric;
 
-        typedDst.vendorMetricId = typedSrc.vendorMetricId;
+        typedDst.vendorMetric = typedSrc.vendorMetric;
 
         typedDst.instanceId = typedSrc.instanceId;
 
-        typedDst.rosettaCode = typedSrc.rosettaCode;
+        typedDst.rosettaUnit = typedSrc.rosettaUnit;
 
         typedDst.value = typedSrc.value;
 
@@ -177,16 +176,16 @@ public class Numeric extends Data
         strBuffer.append("unique_device_identifier: ").append(deviceIdentity.getUniqueDeviceIdentifier()).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("metricId: ").append(metricId).append("\n");
+        strBuffer.append("rosettaMetric: ").append(rosettaMetric).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("vendorMetricId: ").append(vendorMetricId).append("\n");
+        strBuffer.append("vendorMetric: ").append(vendorMetric).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
         strBuffer.append("instanceId: ").append(instanceId).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("rosettaCode: ").append(rosettaCode).append("\n");
+        strBuffer.append("rosettaUnit: ").append(rosettaUnit).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
         strBuffer.append("value: ").append(value).append("\n");

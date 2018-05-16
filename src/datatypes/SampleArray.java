@@ -16,10 +16,10 @@ public class SampleArray extends Data
     public Time_t deviceTime = (Time_t) Time_t.create();
     public Time_t presentationTime = (Time_t) Time_t.create();
 
-    public String metricId = ""; /* maximum length = (64) */
-    public String vendorMetricId = ""; /* maximum length = (64) */
+    public String vendorMetric = ""; /* maximum length = (64) */
+    public String rosettaMetric = ""; /* maximum length = (64) */
+    public String rosettaUnit = ""; /* maximum length = (64) */
     public int instanceId = 0;
-    public String rosettaCode = ""; /* maximum length = (64) */
     public int frequency = 0;
     public Values values = (Values) Values.create();
 
@@ -50,11 +50,11 @@ public class SampleArray extends Data
             return false;
         }
 
-        if(!metricId.equals(otherObj.metricId)) {
+        if(!rosettaMetric.equals(otherObj.rosettaMetric)) {
             return false;
         }
 
-        if(!vendorMetricId.equals(otherObj.vendorMetricId)) {
+        if(!vendorMetric.equals(otherObj.vendorMetric)) {
             return false;
         }
 
@@ -62,7 +62,7 @@ public class SampleArray extends Data
             return false;
         }
 
-        if(!rosettaCode.equals(otherObj.rosettaCode)) {
+        if(!rosettaUnit.equals(otherObj.rosettaUnit)) {
             return false;
         }
 
@@ -89,10 +89,10 @@ public class SampleArray extends Data
         int __result = 0;
 
         __result += deviceIdentity.getUniqueDeviceIdentifier().hashCode();
-        __result += metricId.hashCode();
-        __result += vendorMetricId.hashCode();
+        __result += rosettaMetric.hashCode();
+        __result += vendorMetric.hashCode();
         __result += (int) instanceId;
-        __result += rosettaCode.hashCode();
+        __result += rosettaUnit.hashCode();
         __result += (int)frequency;
         __result += values.hashCode();
         __result += deviceTime.hashCode();
@@ -123,10 +123,10 @@ public class SampleArray extends Data
         SampleArray typedDst = this;
 
         typedDst.deviceIdentity = DeviceIdentity.fromOther(typedSrc.deviceIdentity);
-        typedDst.metricId = typedSrc.metricId;
-        typedDst.vendorMetricId = typedSrc.vendorMetricId;
+        typedDst.rosettaMetric = typedSrc.rosettaMetric;
+        typedDst.vendorMetric = typedSrc.vendorMetric;
         typedDst.instanceId = typedSrc.instanceId;
-        typedDst.rosettaCode = typedSrc.rosettaCode;
+        typedDst.rosettaUnit = typedSrc.rosettaUnit;
         typedDst.frequency = typedSrc.frequency;
         typedDst.values = (Values) typedDst.values.copy_from(typedSrc.values);
         typedDst.deviceTime = (Time_t) typedDst.deviceTime.copy_from(typedSrc.deviceTime);
@@ -190,16 +190,16 @@ public class SampleArray extends Data
         strBuffer.append("unique_device_identifier: ").append(deviceIdentity.getUniqueDeviceIdentifier()).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("metricId: ").append(metricId).append("\n");
+        strBuffer.append("rosettaMetric: ").append(rosettaMetric).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("vendorMetricId: ").append(vendorMetricId).append("\n");
+        strBuffer.append("vendorMetric: ").append(vendorMetric).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
         strBuffer.append("instanceId: ").append(instanceId).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
-        strBuffer.append("rosettaCode: ").append(rosettaCode).append("\n");
+        strBuffer.append("rosettaUnit: ").append(rosettaUnit).append("\n");
 
         CdrHelper.printIndent(strBuffer, indent+1);
         strBuffer.append("frequency: ").append(frequency).append("\n");
