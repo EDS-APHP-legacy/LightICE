@@ -42,8 +42,8 @@ public class JsonSerializer extends Serializer {
                             "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
                             "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
                             "\"data_frequency\": \"" + sa.frequency + "\", " +
-                            "\"data_rosetta_metric\": \"" + sa.rosettaMetric + "\", " +
-                            "\"data_rosetta_unit\": \"" + sa.rosettaUnit + "\", " +
+                            "\"data_rosetta_metric\": \"" + sa.getRosettaMetric() + "\", " +
+                            "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
                             "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
                             "\"data_instance\": \"" + sa.instanceId + "\", " +
                             "\"data_value\": " + values[i] + ", " +
@@ -81,8 +81,8 @@ public class JsonSerializer extends Serializer {
                         "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
                         "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
                         "\"data_frequency\": \"" + sa.frequency + "\", " +
-                        "\"data_rosetta_metric\": \"" + sa.rosettaMetric + "\", " +
-                        "\"data_rosetta_unit\": \"" + sa.rosettaUnit + "\", " +
+                        "\"data_rosetta_metric\": \"" + sa.getRosettaMetric() + "\", " +
+                        "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
                         "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
                         "\"data_instance\": \"" + sa.instanceId + "\", " +
                         "\"data_values\": [" + valuesStrBuffer.toString() + "], " +
@@ -107,8 +107,8 @@ public class JsonSerializer extends Serializer {
                       "\"data_type\": \"numeric\"," +
                       "\"data_presentation_time\": " + nu.presentationTime.timestampMilli() + "," +
                       "\"data_device_time\": " + nu.deviceTime.timestampMilli() + "," +
-                      "\"data_rosetta_metric\": \"" + nu.rosettaMetric + "\", " +
-                      "\"data_rosetta_unit\": \"" + nu.rosettaUnit + "\", " +
+                      "\"data_rosetta_metric\": \"" + nu.getRosettaUnit() + "\", " +
+                      "\"data_rosetta_unit\": \"" + nu.getRosettaUnit() + "\", " +
                       "\"data_vendor_metric\": \"" + nu.vendorMetric + "\", " +
                       "\"data_instance\": \"" + nu.instanceId + "\", " +
                       "\"data_value\": " + nu.value +

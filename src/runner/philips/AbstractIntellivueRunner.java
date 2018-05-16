@@ -1,6 +1,6 @@
 package runner.philips;
 
-import common.DeviceClock;
+import common.time.*;
 import common.DeviceIdentity;
 import common.io.util.StateMachine;
 import common.net.TaskQueue;
@@ -104,7 +104,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         super(deviceIdentity); // initializes the networkloop
         loadMap(numericRosettaMetrics, numericLabels, sampleArrayRosettaMetrics, sampleArrayLabels);
 
-        this.intellivue = new IntellivueExt(new DeviceClock.WallClock());
+        this.intellivue = new IntellivueExt(new WallClock());
 
         TaskQueue.Task<?> watchdogTask = new TaskQueue.TaskImpl<Object>() {
             @Override
@@ -341,7 +341,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         public void run() {
             try {
                 observedValues = sampleArrayCache.keySet().toArray(observedValues);
-                DeviceClock.Reading fakeSampleTime = new DomainClock().instant();
+                ReadOnlyClockInterface fakeSampleTime = new DomainClock().instant();
 
                 for(ObservedValue ov : observedValues) {
                     if(null == ov) {
@@ -364,7 +364,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
                         if(null != holder) {
                             synchronized(sampleCache) {
-                                Collection<Number> c = sampleCache.emitSamples(samples, holder.data.rosettaMetric +" "+holder.data.instanceId);
+                                Collection<Number> c = sampleCache.emitSamples(samples, holder.data.getRosettaMetric() +" "+holder.data.instanceId);
                                 if(null == c) {
                                     putSampleArrayUpdate(ov, handle, null);
                                 } else {
@@ -400,7 +400,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
         private final DemoIntellivueClock deviceClock;
 
-        public IntellivueExt(DeviceClock referenceClock) {
+        public IntellivueExt(Clock referenceClock) {
             super();
             deviceClock = new DemoIntellivueClock(referenceClock);
         }
@@ -720,7 +720,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         protected void handler(ExtendedPollDataResult r) {
             ExtendedPollDataResultImpl result = (ExtendedPollDataResultImpl) r;
             log.debug(String.valueOf(result));
-            DeviceClock.Reading deviceSampleTime = deviceClock.instant(result.getRelativeTime());
+            System.out.println(result.getRelativeTime());
+            ReadOnlyClockInterface deviceSampleTime = deviceClock.instant(result.getRelativeTime());
 
 
             long now = System.currentTimeMillis();
@@ -788,7 +789,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             super.handler(result);
         }
 
-        private final void handler(int handle, DeviceClock.Reading deviceSampleTime, NumericObservedValue observed) {
+        private final void handler(int handle, ReadOnlyClockInterface deviceSampleTime, NumericObservedValue observed) {
             // log.debug(observed.toString());
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
@@ -833,7 +834,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
 
 
-        protected void handler(int handle, DeviceClock.Reading deviceSampleTime, SampleArrayObservedValue saov, long now) {
+        protected void handler(int handle, ReadOnlyClockInterface deviceSampleTime, SampleArrayObservedValue saov, long now) {
             short[] bytes = saov.getValue();
             ObservedValue ov = ObservedValue.valueOf(saov.getPhysioId().getType());
             if (null == ov) {
@@ -1028,11 +1029,11 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     protected final Attribute<HandleId> handle                                      = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_HANDLE, HandleId.class);
 
 
-    static class DemoIntellivueClock implements DeviceClock {
+    static class DemoIntellivueClock implements Clock {
 
-        private final DeviceClock ref;
+        private final Clock ref;
 
-        DemoIntellivueClock(DeviceClock ref) {
+        DemoIntellivueClock(Clock ref) {
             this.ref = ref;
 
         }
@@ -1042,13 +1043,13 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         private long startTimeInDeviceTime;
 
         @Override
-        public Reading instant() {
+        public ReadOnlyClockInterface instant() {
             return ref.instant();
         }
 
-        public Reading instant(RelativeTime time) {
-            Reading deviceTime = new DeviceClock.ReadingImpl(receiveDateTime(time));
-            return new CombinedReading(instant(), deviceTime);
+        public ReadOnlyClockInterface instant(RelativeTime time) {
+            ReadOnlyClockInterface deviceTime = new ReadOnlyClock(receiveDateTime(time));
+            return new ReadOnlyCombinedClock(instant(), deviceTime);
         }
 
         void receiveDateTime(AttributeValueList attrs) {

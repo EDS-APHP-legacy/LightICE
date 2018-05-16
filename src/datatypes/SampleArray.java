@@ -7,18 +7,13 @@ import ice.CdrHelper;
 import ice.Time_t;
 
 
-public class SampleArray extends Data
+public class SampleArray extends RosettaTimeAwareData
 {
     public final String dataType = "waveform";
 
     public DeviceIdentity deviceIdentity;
 
-    public Time_t deviceTime = (Time_t) Time_t.create();
-    public Time_t presentationTime = (Time_t) Time_t.create();
-
     public String vendorMetric = ""; /* maximum length = (64) */
-    public String rosettaMetric = ""; /* maximum length = (64) */
-    public String rosettaUnit = ""; /* maximum length = (64) */
     public int instanceId = 0;
     public int frequency = 0;
     public Values values = (Values) Values.create();
@@ -27,8 +22,6 @@ public class SampleArray extends Data
     public SampleArray() {
 
     }
-
-
 
     public boolean equals(Object o) {
 

@@ -4,18 +4,13 @@ import common.DeviceIdentity;
 import ice.CdrHelper;
 
 
-public class Numeric extends Data
+public class Numeric extends RosettaTimeAwareData
 {
-    public final String dataType = "waveform";
+    public final String dataType = "numeric";
 
     public DeviceIdentity deviceIdentity;
 
-    public ice.Time_t deviceTime = (ice.Time_t) ice.Time_t.create();
-    public ice.Time_t presentationTime = (ice.Time_t) ice.Time_t.create();
-
     public String vendorMetric = ""; /* maximum length = (64) */
-    public String rosettaMetric = ""; /* maximum length = (64) */
-    public String rosettaUnit = ""; /* maximum length = (64) */
     public int instanceId = 0;
     public float value = 0;
 
@@ -23,14 +18,6 @@ public class Numeric extends Data
     public Numeric() {
 
     }
-
-
-    public Numeric(Numeric other) {
-
-        this();
-        copy_from(other);
-    }
-
 
     public boolean equals(Object o) {
 

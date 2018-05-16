@@ -33,7 +33,7 @@ public class AvroSerializer extends Serializer {
                 DataSingle dataSingle;
                 SingleValue singleValue;
                 for (int i = 0; i < sa.getValues().length; ++i) {
-                    dataSingle = new DataSingle(sa.rosettaUnit, sa.rosettaMetric, sa.vendorMetric, sa.instanceId, sa.getValues()[i], tmpTimestamps[i]);
+                    dataSingle = new DataSingle(sa.getRosettaUnit(), sa.getRosettaMetric(), sa.vendorMetric, sa.instanceId, sa.getValues()[i], tmpTimestamps[i]);
                     singleValue = new SingleValue(sa.dataType, deviceInfo, dataSingle);
 
                     try {
@@ -53,7 +53,7 @@ public class AvroSerializer extends Serializer {
                     timestamps.add(i, tmpTimestamps[i]);
                 }
 
-                DataArray dataArray = new DataArray((float) sa.frequency, sa.rosettaUnit, sa.rosettaMetric, sa.vendorMetric, sa.instanceId, values, timestamps);
+                DataArray dataArray = new DataArray((float) sa.frequency, sa.getRosettaUnit(), sa.getRosettaMetric(), sa.vendorMetric, sa.instanceId, values, timestamps);
                 ArrayValues arrayValues = new ArrayValues(sa.dataType, deviceInfo, dataArray);
 
                 try {
@@ -68,7 +68,7 @@ public class AvroSerializer extends Serializer {
         } else if(data instanceof Numeric) {
             Numeric nu = (Numeric) data;
 
-            DataSingle dataSingle = new DataSingle(nu.rosettaUnit, nu.rosettaMetric, nu.vendorMetric, nu.instanceId, nu.value, nu.getTimestampDeviceTime());
+            DataSingle dataSingle = new DataSingle(nu.getRosettaUnit(), nu.getRosettaMetric(), nu.vendorMetric, nu.instanceId, nu.value, nu.getTimestampDeviceTime());
             SingleValue singleValue = new SingleValue(nu.dataType, deviceInfo, dataSingle);
 
             try {

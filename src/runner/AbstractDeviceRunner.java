@@ -1,9 +1,10 @@
 package runner;
 
-import common.DeviceClock;
+import common.time.Clock;
 import common.DeviceIdentity;
 import common.io.util.StateMachine;
 import common.net.NetworkLoop;
+import common.time.ReadOnlyClockInterface;
 import datatypes.Data;
 import datatypes.Numeric;
 import export.writers.Writer;
@@ -167,10 +168,10 @@ public abstract class AbstractDeviceRunner {
         InstanceHolder<SampleArray> holder = new InstanceHolder<SampleArray>();
         holder.data = new SampleArray();
         holder.data.deviceIdentity = deviceIdentity;
-        holder.data.rosettaMetric = rosettaMetric;
+        holder.data.setRosettaMetric(rosettaMetric);
+        holder.data.setRosettaUnit(rosettaUnit);
         holder.data.vendorMetric = vendor_rosettaMetric;
         holder.data.instanceId = instance_id;
-        holder.data.rosettaUnit = rosettaUnit;
         holder.data.frequency = frequency;
 
         holder.handle = null;
@@ -196,11 +197,11 @@ public abstract class AbstractDeviceRunner {
                                                                 String rosettaMetric, String vendor_rosettaMetric, int instance_id,
                                                                 String rosettaUnit, int frequency) {
 
-        if (null != holder && (!holder.data.rosettaMetric.equals(rosettaMetric) ||
+        if (null != holder && (!holder.data.getRosettaMetric().equals(rosettaMetric) ||
                 !holder.data.vendorMetric.equals(vendor_rosettaMetric) ||
                 holder.data.instanceId != instance_id ||
                 holder.data.frequency != frequency ||
-                !holder.data.rosettaUnit.equals(rosettaUnit))) {
+                !holder.data.getRosettaUnit().equals(rosettaUnit))) {
 
             unregisterSampleArrayInstance(holder);
             holder = null;
@@ -211,7 +212,7 @@ public abstract class AbstractDeviceRunner {
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                             Number[] newValues,
                                                             String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, int frequency,
-                                                            DeviceClock.Reading timestamp) {
+                                                            ReadOnlyClockInterface timestamp) {
         return sampleArraySample(holder, newValues, rosettaMetric, vendor_rosettaMetric, 0, rosettaUnit, frequency, timestamp);
     }
 
@@ -219,28 +220,28 @@ public abstract class AbstractDeviceRunner {
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Number[] newValues, int len,
                                                                 String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
-                                                                DeviceClock.Reading timestamp) {
+                                                                ReadOnlyClockInterface timestamp) {
         return sampleArraySample(holder, new ArrayContainer<>(newValues, len), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Number[] newValues,
                                                                 String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
-                                                                DeviceClock.Reading timestamp) {
+                                                                ReadOnlyClockInterface timestamp) {
         return sampleArraySample(holder, new ArrayContainer<>(newValues), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     protected InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                                 Collection<Number> newValues,
                                                                 String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
-                                                                DeviceClock.Reading timestamp) {
+                                                                ReadOnlyClockInterface timestamp) {
         return sampleArraySample(holder, new CollectionContainer<>(newValues), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency, timestamp);
     }
 
     private InstanceHolder<SampleArray> sampleArraySample(InstanceHolder<SampleArray> holder,
                                                           NullSaveContainer<Number> newValues,
                                                           String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, int frequency,
-                                                          DeviceClock.Reading timestamp) {
+                                                          ReadOnlyClockInterface timestamp) {
 
         holder = ensureHolderConsistency(holder, rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, frequency);
 
@@ -260,15 +261,15 @@ public abstract class AbstractDeviceRunner {
         }
         return holder;
     }
-    protected void sampleArraySample(SampleArray sampleArray, Number[] newValues, DeviceClock.Reading timestamp) {
+    protected void sampleArraySample(SampleArray sampleArray, Number[] newValues, ReadOnlyClockInterface timestamp) {
         sampleArraySample(sampleArray, new ArrayContainer<>(newValues), timestamp);
     }
 
-    protected void sampleArraySample(SampleArray sampleArray, Collection<Number> newValues, DeviceClock.Reading timestamp) {
+    protected void sampleArraySample(SampleArray sampleArray, Collection<Number> newValues, ReadOnlyClockInterface timestamp) {
         sampleArraySample(sampleArray, new CollectionContainer<>(newValues), timestamp);
     }
 
-    private void sampleArraySample(SampleArray data, NullSaveContainer<Number> newValues, DeviceClock.Reading deviceTimestamp) {
+    private void sampleArraySample(SampleArray data, NullSaveContainer<Number> newValues, ReadOnlyClockInterface deviceTimestamp) {
         fill(data, newValues);
         publish(data, deviceTimestamp);
     }
@@ -289,10 +290,10 @@ public abstract class AbstractDeviceRunner {
         InstanceHolder<Numeric> holder = new InstanceHolder<Numeric>();
         holder.data = new Numeric();
         holder.data.deviceIdentity = deviceIdentity;
-        holder.data.rosettaMetric = rosettaMetric;
+        holder.data.setRosettaMetric(rosettaMetric);
         holder.data.vendorMetric = vendor_rosettaMetric;
         holder.data.instanceId = instance_id;
-        holder.data.rosettaUnit = rosettaUnit;
+        holder.data.setRosettaUnit(rosettaUnit);
 
         holder.handle = null;
         //holder.handler = numericDataWriter.register_instance(holder.data);
@@ -309,29 +310,29 @@ public abstract class AbstractDeviceRunner {
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, ReadOnlyClockInterface time) {
         return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, rosettaUnit, time);
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, ReadOnlyClockInterface time) {
         return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
     }
 
     // For convenience
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Integer newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, ReadOnlyClockInterface time) {
         return numericSample(holder, null == newValue ? null : newValue.floatValue(), rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit, time);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, String rosettaUnit, ReadOnlyClockInterface time) {
         return numericSample(holder, newValue, rosettaMetric, vendor_rosettaMetric, 0, rosettaUnit, time);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, ReadOnlyClockInterface time) {
         return numericSample(holder, newValue, rosettaMetric, vendor_rosettaMetric, instance_id, rosetta.MDC_DIM_DIMLESS.VALUE, time);
     }
 
-    protected void numericSample(Numeric numeric, float newValue, DeviceClock.Reading deviceTimestamp) {
+    protected void numericSample(Numeric numeric, float newValue, ReadOnlyClockInterface deviceTimestamp) {
         numeric.value = newValue;
         if(deviceTimestamp.hasDeviceTime()) {
             numeric.deviceTime.sec = (int) deviceTimestamp.getTime().getEpochSecond();
@@ -348,9 +349,9 @@ public abstract class AbstractDeviceRunner {
         //numericDataWriter.write(holder.data, holder.handler);
     }
 
-    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, DeviceClock.Reading time) {
+    protected InstanceHolder<Numeric> numericSample(InstanceHolder<Numeric> holder, Float newValue, String rosettaMetric, String vendor_rosettaMetric, int instance_id, String rosettaUnit, ReadOnlyClockInterface time) {
 
-        if (holder != null && (!holder.data.rosettaMetric.equals(rosettaMetric) || !holder.data.vendorMetric.equals(vendor_rosettaMetric) || holder.data.instanceId != instance_id || !holder.data.rosettaUnit.equals(rosettaUnit))) {
+        if (holder != null && (!holder.data.getRosettaMetric().equals(rosettaMetric) || !holder.data.vendorMetric.equals(vendor_rosettaMetric) || holder.data.instanceId != instance_id || !holder.data.getRosettaUnit().equals(rosettaUnit))) {
             unregisterNumericInstance(holder);
             holder = null;
         }
@@ -378,7 +379,7 @@ public abstract class AbstractDeviceRunner {
         }
     }
 
-    private void publish(Data data, DeviceClock.Reading deviceTimestamp) {
+    private void publish(Data data, ReadOnlyClockInterface deviceTimestamp) {
         for (Writer p : this.listeners) {
             p.write(this.deviceIdentity, data);
         }
