@@ -19,7 +19,10 @@ public class KafkaWriter extends Writer {
         if (!Objects.equals(kafkaJaasConfPath, "") && kafkaJaasConfPath != null)
             System.setProperty("java.security.auth.login.config", kafkaJaasConfPath);
 
-        if (serializer.outputType == String.class) {
+        if (serializer.outputType == null) {
+
+        }
+        else if (serializer.outputType == String.class) {
             kafkaProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
             kafkaProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
             this.producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(kafkaProps);

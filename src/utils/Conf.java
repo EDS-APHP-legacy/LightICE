@@ -68,9 +68,10 @@ public class Conf {
                     throw new UnsupportedOperationException();
                 }
             }
-            catch (NullPointerException ignored) {
+            catch (NullPointerException e) {
+                System.err.println("[ERROR] Configuration incorrect, you probably forgot serializer_flat.");
             }
-            
+
             Writer writer;
             if (Objects.equals(type, "kafka")) {
                 String kafkaTopic = value.asObject().get("topic").asString();
