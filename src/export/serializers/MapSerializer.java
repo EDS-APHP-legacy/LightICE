@@ -38,9 +38,9 @@ public class MapSerializer extends Serializer {
                 obj.put("data_type", "sample");
                 obj.put("data_presentation_time", sa.presentationTime.timestampMilli());
                 obj.put("data_device_time", sa.deviceTime.timestampMilli());
-                obj.put("data_rosetta_code", sa.rosettaUnit);
-                obj.put("data_metric_id", sa.rosettaMetric);
-                obj.put("data_vendor_metric_id", sa.vendorMetric);
+                obj.put("data_rosetta_unit", sa.rosettaUnit);
+                obj.put("data_rosetta_metric", sa.rosettaMetric);
+                obj.put("data_vendor_metric", sa.vendorMetric);
                 obj.put("data_instance_id", sa.instanceId);
                 obj.put("data_value", value);
                 result.add(obj);
@@ -64,9 +64,9 @@ public class MapSerializer extends Serializer {
             obj.put("data_type", "sample");
             obj.put("data_presentation_time", nu.presentationTime.timestampMilli());
             obj.put("data_device_time", nu.deviceTime.timestampMilli());
-            obj.put("data_rosetta_code", nu.rosettaUnit);
-            obj.put("data_metric_id", nu.rosettaMetric);
-            obj.put("data_vendor_metric_id", nu.vendorMetric);
+            obj.put("data_rosetta_unit", nu.rosettaUnit);
+            obj.put("data_rosetta_metric", nu.rosettaMetric);
+            obj.put("data_vendor_metric", nu.vendorMetric);
             obj.put("data_instance_id", nu.instanceId);
             obj.put("data_value", nu.value);
             result.add(obj);
