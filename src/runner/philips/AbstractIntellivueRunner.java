@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import runner.AbstractDeviceRunner;
 import runner.InstanceHolder;
+import runner.philips.time.DemoIntellivueClock;
 
 import java.io.*;
 import java.lang.Float;
@@ -194,7 +195,6 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     }
 
 
-
     protected void unregisterAll() {
         for (SelectionKey key : registrationKeys) {
             networkLoop.unregister(key, intellivue);
@@ -320,6 +320,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     private synchronized void startEmitFastData() {
         // for the 62.5Hz case we use two seconds (125 samples)
         log.info("Start emit fast data for period " + PERIOD + "ms");
+        //TODO: Configurable Emit Period
         emitFastData = executor.scheduleAtFixedRate(new EmitData(),2 * PERIOD - System.currentTimeMillis() % PERIOD, PERIOD, TimeUnit.MILLISECONDS);
     }
     private synchronized void stopEmitFastData() {
@@ -341,7 +342,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         public void run() {
             try {
                 observedValues = sampleArrayCache.keySet().toArray(observedValues);
-                ReadOnlyClockInterface fakeSampleTime = new DomainClock().instant();
+                IceInstantInterface fakeSampleTime = new DomainClock().instant();
 
                 for(ObservedValue ov : observedValues) {
                     if(null == ov) {
@@ -721,7 +722,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             ExtendedPollDataResultImpl result = (ExtendedPollDataResultImpl) r;
             log.debug(String.valueOf(result));
             System.out.println(result.getRelativeTime());
-            ReadOnlyClockInterface deviceSampleTime = deviceClock.instant(result.getRelativeTime());
+            IceInstantInterface deviceSampleTime = deviceClock.instantFromRelative(result.getRelativeTime());
 
 
             long now = System.currentTimeMillis();
@@ -789,7 +790,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             super.handler(result);
         }
 
-        private final void handler(int handle, ReadOnlyClockInterface deviceSampleTime, NumericObservedValue observed) {
+        private final void handler(int handle, IceInstantInterface deviceSampleTime, NumericObservedValue observed) {
             // log.debug(observed.toString());
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
@@ -834,7 +835,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
 
 
-        protected void handler(int handle, ReadOnlyClockInterface deviceSampleTime, SampleArrayObservedValue saov, long now) {
+        protected void handler(int handle, IceInstantInterface deviceSampleTime, SampleArrayObservedValue saov, long now) {
             short[] bytes = saov.getValue();
             ObservedValue ov = ObservedValue.valueOf(saov.getPhysioId().getType());
             if (null == ov) {
@@ -1027,53 +1028,4 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     protected final Attribute<DisplayResolution> displayResolution                  = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_DISP_RES, DisplayResolution.class);
      protected final Attribute<EnumValue<SimpleColor>> color                         = AttributeFactory.getEnumAttribute(AttributeId.NOM_ATTR_COLOR.asOid(), SimpleColor.class);
     protected final Attribute<HandleId> handle                                      = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_HANDLE, HandleId.class);
-
-
-    static class DemoIntellivueClock implements Clock {
-
-        private final Clock ref;
-
-        DemoIntellivueClock(Clock ref) {
-            this.ref = ref;
-
-        }
-        // For a point in time this is currentTime-runTime
-        // Or, in other words, the time when the device started
-        // according to the device clock
-        private long startTimeInDeviceTime;
-
-        @Override
-        public ReadOnlyClockInterface instant() {
-            return ref.instant();
-        }
-
-        public ReadOnlyClockInterface instant(RelativeTime time) {
-            ReadOnlyClockInterface deviceTime = new ReadOnlyClock(receiveDateTime(time));
-            return new ReadOnlyCombinedClock(instant(), deviceTime);
-        }
-
-        void receiveDateTime(AttributeValueList attrs) {
-
-            Attribute<AbsoluteTime> clockTime = attrs.getAttribute(AttributeId.NOM_ATTR_TIME_ABS, AbsoluteTime.class);
-            Attribute<RelativeTime> offsetTime = attrs.getAttribute(AttributeId.NOM_ATTR_TIME_REL, RelativeTime.class);
-
-            if (null == clockTime) {
-                log.warn("No NOM_ATTR_TIME_ABS in MDS Create");
-            } else if (null == offsetTime) {
-                log.warn("No NOM_ATTR_TIME_REL in MDS Create");
-            } else {
-                long currentTime = clockTime.getValue().getDate().getTime();
-                long runTime = offsetTime.getValue().toMilliseconds();
-                startTimeInDeviceTime = currentTime - runTime;
-            }
-        }
-
-        long receiveDateTime(RelativeTime time) {
-            // TBD - make it handler microseconds
-            // long microseconds = time.toMicroseconds();
-            long runningTime = time.toMilliseconds();
-            long currentTimeInDeviceTime = startTimeInDeviceTime + runningTime;
-            return currentTimeInDeviceTime;
-        }
-    }
 }

@@ -3,8 +3,8 @@ package common.time;
 public class WallClock implements Clock {
 
     @Override
-    public ReadOnlyClockInterface instant() {
-        return new ReadOnlyClock(getTimeInMillis());
+    public IceInstantInterface instant() {
+        return new IceInstant(getTimeInMillis());
     }
 
     protected long getTimeInMillis()

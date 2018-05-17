@@ -93,7 +93,6 @@ public class Intellivue implements NetworkConnection {
     public Intellivue() {
         inBuffer.order(ByteOrder.BIG_ENDIAN);
         outBuffer.order(ByteOrder.BIG_ENDIAN);
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(Intellivue.class);

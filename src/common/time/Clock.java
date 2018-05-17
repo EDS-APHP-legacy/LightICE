@@ -3,8 +3,8 @@ package common.time;
 public interface Clock {
 
     /**
-     * @return a ReadOnlyClock representing the current instant as defined by the clock, not null
+     * @return a IceInstant representing the current instantFromRelative as defined by the clock, not null
      */
-    ReadOnlyClockInterface instant();
+    IceInstantInterface instant();
 
 }

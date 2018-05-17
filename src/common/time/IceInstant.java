@@ -2,13 +2,13 @@ package common.time;
 
 import java.time.Instant;
 
-public class ReadOnlyClock implements ReadOnlyClockInterface {
+public class IceInstant implements IceInstantInterface {
     private final Instant ms;
 
-    public ReadOnlyClock(long time) {
+    public IceInstant(long time) {
         this(Instant.ofEpochMilli(time));
     }
-    public ReadOnlyClock(Instant time) {
+    public IceInstant(Instant time) {
         ms = time;
     }
 
@@ -33,7 +33,7 @@ public class ReadOnlyClock implements ReadOnlyClockInterface {
     }
 
     @Override
-    public ReadOnlyClockInterface refineResolutionForFrequency(int hertz, int size) {
+    public IceInstantInterface refineResolutionForFrequency(int hertz, int size) {
         return this;
     }
 }

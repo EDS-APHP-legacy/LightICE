@@ -1,7 +1,7 @@
 package fakedds;
 
 import common.time.Clock;
-import common.time.ReadOnlyClockInterface;
+import common.time.IceInstantInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import runner.AbstractDeviceRunner;
@@ -122,8 +122,8 @@ public class DomainClock implements Clock {
     }
 
     @Override
-    public ReadOnlyClockInterface instant() {
-        return new ReadOnlyClockInterface() {
+    public IceInstantInterface instant() {
+        return new IceInstantInterface() {
 
             private final Instant ms = currentTime();
 
@@ -144,7 +144,7 @@ public class DomainClock implements Clock {
             }
 
             @Override
-            public ReadOnlyClockInterface refineResolutionForFrequency(int hertz, int size) {
+            public IceInstantInterface refineResolutionForFrequency(int hertz, int size) {
                 currentArrayResolutionNsPerSample = ensureResolutionForFrequency(currentArrayResolutionNsPerSample, hertz, size);
                 return this;
             }

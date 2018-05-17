@@ -2,12 +2,12 @@ package common.time;
 
 import java.time.Instant;
 
-public class ReadOnlyCombinedClock implements ReadOnlyClockInterface {
+public class IceInstantCombined implements IceInstantInterface {
 
-    final ReadOnlyClockInterface ref;
-    final ReadOnlyClockInterface dev;
+    final IceInstantInterface ref;
+    final IceInstantInterface dev;
 
-    public ReadOnlyCombinedClock(ReadOnlyClockInterface ref, ReadOnlyClockInterface dev) {
+    public IceInstantCombined(IceInstantInterface ref, IceInstantInterface dev) {
         this.ref = ref;
         this.dev = dev;
     }
@@ -33,7 +33,7 @@ public class ReadOnlyCombinedClock implements ReadOnlyClockInterface {
     }
 
     @Override
-    public ReadOnlyClockInterface refineResolutionForFrequency(int hertz, int size) {
+    public IceInstantInterface refineResolutionForFrequency(int hertz, int size) {
         ref.refineResolutionForFrequency(hertz, size);
         return this;
     }
