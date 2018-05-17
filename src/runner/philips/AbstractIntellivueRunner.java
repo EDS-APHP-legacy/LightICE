@@ -66,7 +66,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     private long lastMessageSentTime = 0L;
     private static final long PERIOD = 1000L;
 
-    private Intellivue intellivue;
+    protected final Intellivue intellivue;
 
     //protected final EventLoop eventLoop;
     protected ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
@@ -852,7 +852,6 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     if (null == sampleArraySpecification || null == relativeTime || null == scaleAndRangeSpecification || null == unitCode) {
                         log.warn("No SampleArraySpecification or RelativeTime for handler=" + handle + " rt=" + relativeTime + " sas=" + sampleArraySpecification + " sar=" + scaleAndRangeSpecification + " unitCode=" + unitCode);
                     } else {
-                        System.out.println("Here: " + Integer.toString(handle) + "\t" + deviceSampleTime);
                         int cnt = sampleArraySpecification.getArraySize();
                         // TODO these were once cached, no?
                         MySampleArray w = new MySampleArray(sampleArraySpecification, scaleAndRangeSpecification);
