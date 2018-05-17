@@ -39,8 +39,8 @@ public class JsonSerializer extends Serializer {
                             "\"deviceinfo_serial_number\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
                             "\"deviceinfo_operating_system\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"," +
                             "\"data_type\": \"sample\"," +
-                            "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
-                            "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
+                            "\"data_presentation_time\": " + sa.getPresentationTime().timestampMilli() + "," +
+                            "\"data_device_time\": " + sa.getDeviceTime().timestampMilli() + "," +
                             "\"data_frequency\": \"" + sa.frequency + "\", " +
                             "\"data_rosetta_metric\": \"" + sa.getRosettaMetric() + "\", " +
                             "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
@@ -78,8 +78,8 @@ public class JsonSerializer extends Serializer {
                         "\"deviceinfo_serial_number\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
                         "\"deviceinfo_operating_system\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"," +
                         "\"data_type\": \"sample\"," +
-                        "\"data_presentation_time\": " + sa.presentationTime.timestampMilli() + "," +
-                        "\"data_device_time\": " + sa.deviceTime.timestampMilli() + "," +
+                        "\"data_presentation_time\": " + sa.getPresentationTime().timestampMilli() + "," +
+                        "\"data_device_time\": " + sa.getDeviceTime().timestampMilli() + "," +
                         "\"data_frequency\": \"" + sa.frequency + "\", " +
                         "\"data_rosetta_metric\": \"" + sa.getRosettaMetric() + "\", " +
                         "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
@@ -105,8 +105,8 @@ public class JsonSerializer extends Serializer {
                       "\"deviceinfo_serial_number\": \"" + nu.deviceIdentity.getSerialNumber() + "\"," +
                       "\"deviceinfo_operating_system\": \"" + nu.deviceIdentity.getOperatingSystem() + "\"," +
                       "\"data_type\": \"numeric\"," +
-                      "\"data_presentation_time\": " + nu.presentationTime.timestampMilli() + "," +
-                      "\"data_device_time\": " + nu.deviceTime.timestampMilli() + "," +
+                      "\"data_presentation_time\": " + nu.getPresentationTime().timestampMilli() + "," +
+                      "\"data_device_time\": " + nu.getDeviceTime().timestampMilli() + "," +
                       "\"data_rosetta_metric\": \"" + nu.getRosettaUnit() + "\", " +
                       "\"data_rosetta_unit\": \"" + nu.getRosettaUnit() + "\", " +
                       "\"data_vendor_metric\": \"" + nu.vendorMetric + "\", " +

@@ -24,7 +24,6 @@ import drivers.philips.intellivue.dataexport.DataExportResult;
 import drivers.philips.intellivue.dataexport.command.EventReport;
 import drivers.philips.intellivue.dataexport.command.SetResult;
 import drivers.philips.intellivue.dataexport.event.MdsCreateEvent;
-import fakedds.DomainClock;
 import datatypes.SampleArray;
 import ice.ConnectionState;
 import datatypes.Numeric;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import runner.AbstractDeviceRunner;
 import runner.InstanceHolder;
-import runner.philips.time.DemoIntellivueClock;
+import runner.philips.time.IntellivueRelativeClock;
 
 import java.io.*;
 import java.lang.Float;
@@ -342,7 +341,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         public void run() {
             try {
                 observedValues = sampleArrayCache.keySet().toArray(observedValues);
-                IceInstantInterface fakeSampleTime = new DomainClock().instant();
+                IceInstant fakeSampleTime = IceInstant.now(); // new DomainClock().instant();
 
                 for(ObservedValue ov : observedValues) {
                     if(null == ov) {
@@ -369,7 +368,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                                 if(null == c) {
                                     putSampleArrayUpdate(ov, handle, null);
                                 } else {
-                                    sampleArraySample(holder.data, c, fakeSampleTime);
+                                    sampleArraySample(holder.data, c, null, fakeSampleTime);
                                 }
                             }
                         } else {
@@ -399,11 +398,13 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
         private final Logger log = LoggerFactory.getLogger(IntellivueExt.class);
 
-        private final DemoIntellivueClock deviceClock;
+        private final Clock referenceClock;
+        private IntellivueRelativeClock intellivueRelativeClock = null;
 
         public IntellivueExt(Clock referenceClock) {
             super();
-            deviceClock = new DemoIntellivueClock(referenceClock);
+            this.referenceClock = referenceClock;
+//            intellivueRelativeClock = new IntellivueRelativeClock();
         }
 
         @Override
@@ -479,7 +480,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 //                Attribute<org.mdpnp.devices.philips.intellivue.data.String> as = attrs.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL,
 //                        org.mdpnp.devices.philips.intellivue.data.String.class);
 
-                    deviceClock.receiveDateTime(attrs);
+                    intellivueRelativeClock = new IntellivueRelativeClock();
+                    intellivueRelativeClock.setDeviceStartTime(attrs);
 
                     if (null != asm) {
                         deviceIdentity.setManufacturer(asm.getValue().getManufacturer().getString());
@@ -721,9 +723,12 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         protected void handler(ExtendedPollDataResult r) {
             ExtendedPollDataResultImpl result = (ExtendedPollDataResultImpl) r;
             log.debug(String.valueOf(result));
-            System.out.println(result.getRelativeTime());
-            IceInstantInterface deviceSampleTime = deviceClock.instantFromRelative(result.getRelativeTime());
 
+            if (intellivueRelativeClock == null) {
+                log.error("intellivueRelativeClock not initialized with setDeviceStartTime!");
+            }
+            IceInstant deviceInstant = intellivueRelativeClock.instantFromRelative(result.getRelativeTime());
+            IceInstant referenceTime = this.referenceClock.instant();
 
             long now = System.currentTimeMillis();
             // we could track gaps in poll sequence numbers but instead we're
@@ -758,12 +763,12 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                         }
 
                         if (null != observed) {
-                            handler(handle, deviceSampleTime, observed.getValue());
+                            handler(handle, deviceInstant, referenceTime, observed.getValue());
                         }
 
                         if (null != compoundObserved) {
                             for (NumericObservedValue nov : compoundObserved.getValue().getList()) {
-                                handler(handle, deviceSampleTime, nov);
+                                handler(handle, deviceInstant, referenceTime, nov);
                             }
                         }
 
@@ -778,11 +783,11 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                         }
                         if (null != cov) {
                             for (SampleArrayObservedValue saov : cov.getValue().getList()) {
-                                handler(handle, deviceSampleTime, saov, now);
+                                handler(handle, deviceInstant, saov, now);
                             }
                         }
                         if (null != v) {
-                            handler(handle, deviceSampleTime, v.getValue(), now);
+                            handler(handle, deviceInstant, v.getValue(), now);
                         }
                     }
                 }
@@ -790,7 +795,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             super.handler(result);
         }
 
-        private final void handler(int handle, IceInstantInterface deviceSampleTime, NumericObservedValue observed) {
+        private final void handler(int handle, IceInstant deviceInstant, IceInstant referenceTime, NumericObservedValue observed) {
             // log.debug(observed.toString());
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
@@ -800,9 +805,9 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
 
                     if (observed.getMsmtState().isUnavailable())
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceSampleTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceInstant, referenceTime));
                     else
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceSampleTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceInstant, referenceTime));
 
                 } else {
                     log.debug("Unknown numeric:" + observed);
@@ -835,7 +840,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
 
 
-        protected void handler(int handle, IceInstantInterface deviceSampleTime, SampleArrayObservedValue saov, long now) {
+        protected void handler(int handle, IceInstant deviceSampleTime, SampleArrayObservedValue saov, long now) {
             short[] bytes = saov.getValue();
             ObservedValue ov = ObservedValue.valueOf(saov.getPhysioId().getType());
             if (null == ov) {
@@ -877,7 +882,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                                 w.applyValue(i, bytes);
                             }
 
-                            Map<Integer, SampleCache> handleToSampleCache = sampleArrayCache.computeIfAbsent(ov, k -> Collections.synchronizedMap(new HashMap<Integer, SampleCache>()));
+                            Map<Integer, SampleCache> handleToSampleCache = sampleArrayCache.computeIfAbsent(ov, k -> Collections.synchronizedMap(new HashMap<>()));
                             SampleCache sampleCache = handleToSampleCache.get(handle);
                             if(null == sampleCache) {
                                 sampleCache = new SampleCache();

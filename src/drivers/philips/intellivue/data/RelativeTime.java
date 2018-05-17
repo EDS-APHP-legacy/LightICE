@@ -22,6 +22,8 @@ import common.io.util.Bits;
  */
 public class RelativeTime implements Value {
     private long relativeTime;
+
+    // TODO: is 125L correct for every waveform?
     private static final long RESOLUTION_MICROSECONDS = 125L;
 
     public RelativeTime() {

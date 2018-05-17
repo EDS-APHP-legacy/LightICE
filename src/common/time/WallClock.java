@@ -3,13 +3,7 @@ package common.time;
 public class WallClock implements Clock {
 
     @Override
-    public IceInstantInterface instant() {
-        return new IceInstant(getTimeInMillis());
+    public IceInstant instant() {
+        return IceInstant.now();
     }
-
-    protected long getTimeInMillis()
-    {
-        return System.currentTimeMillis();
-    }
-
 }

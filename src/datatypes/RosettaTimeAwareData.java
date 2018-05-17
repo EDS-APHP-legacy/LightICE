@@ -1,10 +1,12 @@
 package datatypes;
 
+import common.time.IceInstant;
+import common.time.IceInstantInterface;
 import ice.Time_t;
 
 abstract class RosettaTimeAwareData extends Data {
-    public Time_t deviceTime = (Time_t) Time_t.create();
-    public Time_t presentationTime = (Time_t) Time_t.create();
+    protected Time_t deviceTime = (Time_t) Time_t.create();
+    protected Time_t presentationTime = (Time_t) Time_t.create();
 
     protected String rosettaMetric = ""; /* maximum length = (64) */
     protected String rosettaUnit = ""; /* maximum length = (64) */
@@ -35,5 +37,28 @@ abstract class RosettaTimeAwareData extends Data {
 
     public String getRosettaUnit() {
         return this.rosettaUnit;
+    }
+
+    public Time_t getDeviceTime() {
+        return this.deviceTime;
+    }
+
+    public Time_t getPresentationTime() {
+        return this.presentationTime;
+    }
+
+    public void setTime(IceInstant deviceTime, IceInstant referenceTime) {
+        if (deviceTime == null) {
+            this.deviceTime.sec = 0;
+            this.deviceTime.nanosec = 0;
+        }
+        else {
+            this.deviceTime.sec = (int) deviceTime.getTime().getEpochSecond();
+            this.deviceTime.nanosec = deviceTime.getTime().getNano();
+        }
+
+        this.presentationTime.sec = (int) referenceTime.getTime().getEpochSecond();
+        this.presentationTime.nanosec = referenceTime.getTime().getNano();
+
     }
 }

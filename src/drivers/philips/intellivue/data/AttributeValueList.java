@@ -88,7 +88,7 @@ public class AttributeValueList implements Parseable, Formatable, Util.PrefixLen
         // TODO this is ugly
         // ByteBuffer bb = ByteBuffer.allocate(5000);
         // bb.order(ByteOrder.BIG_ENDIAN);
-        // f.format(bb);
+        // computeRelative.format(bb);
         // bb.flip();
         // byte[] buf = new byte[bb.remaining()];
         // bb.get(buf);

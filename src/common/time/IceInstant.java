@@ -2,38 +2,46 @@ package common.time;
 
 import java.time.Instant;
 
-public class IceInstant implements IceInstantInterface {
+public class IceInstant {
     private final Instant ms;
 
-    public IceInstant(long time) {
-        this(Instant.ofEpochMilli(time));
-    }
-    public IceInstant(Instant time) {
-        ms = time;
+    public static IceInstant now() {
+        return new IceInstant(System.currentTimeMillis(), TimeUnit.MS);
     }
 
-    @Override
+    public IceInstant(long timestamp, TimeUnit timeUnit) {
+        if (timeUnit == TimeUnit.SEC)
+            this.ms = Instant.ofEpochSecond(timestamp);
+        else if (timeUnit == TimeUnit.MS)
+            this.ms = Instant.ofEpochMilli(timestamp);
+        else if (timeUnit == TimeUnit.µS)
+            this.ms = Instant.ofEpochSecond(timestamp / 1000000L, timestamp % 1000000L);
+        else if (timeUnit == TimeUnit.NS) {
+            this.ms = Instant.ofEpochSecond(timestamp / 1000000000L, timestamp % 1000000000L);
+            System.err.println("[WARNING] Using IceInstant with nanoseconds can lead to wrapping around to Long.MIN_VALUE.");
+        }
+        else {
+            throw new UnsupportedOperationException("TimeUnit " + timeUnit.toString() + " is not supported by IceInstant.");
+        }
+    }
+
     public String toString() {
         return ms.toString();
     }
 
-    @Override
     public Instant getTime() {
         return ms;
     }
 
-    @Override
     public Instant getDeviceTime() {
         return ms;
     }
 
-    @Override
     public boolean hasDeviceTime() {
         return true;
     }
 
-    @Override
-    public IceInstantInterface refineResolutionForFrequency(int hertz, int size) {
+    public IceInstant refineResolutionForFrequency(int hertz, int size) {
         return this;
     }
 }

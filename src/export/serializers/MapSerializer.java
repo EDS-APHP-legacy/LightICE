@@ -36,8 +36,8 @@ public class MapSerializer extends Serializer {
                 obj.put("deviceinfo_serial_number", sa.deviceIdentity.getSerialNumber());
                 obj.put("deviceinfo_operating_system", sa.deviceIdentity.getOperatingSystem());
                 obj.put("data_type", "sample");
-                obj.put("data_presentation_time", sa.presentationTime.timestampMilli());
-                obj.put("data_device_time", sa.deviceTime.timestampMilli());
+                obj.put("data_presentation_time", sa.getPresentationTime().timestampMilli());
+                obj.put("data_device_time", sa.getDeviceTime().timestampMilli());
                 obj.put("data_rosetta_unit", sa.getRosettaUnit());
                 obj.put("data_rosetta_metric", sa.getRosettaMetric());
                 obj.put("data_vendor_metric", sa.vendorMetric);
@@ -62,8 +62,8 @@ public class MapSerializer extends Serializer {
             obj.put("deviceinfo_serial_number", nu.deviceIdentity.getSerialNumber());
             obj.put("deviceinfo_operating_system", nu.deviceIdentity.getOperatingSystem());
             obj.put("data_type", "sample");
-            obj.put("data_presentation_time", nu.presentationTime.timestampMilli());
-            obj.put("data_device_time", nu.deviceTime.timestampMilli());
+            obj.put("data_presentation_time", nu.getPresentationTime().timestampMilli());
+            obj.put("data_device_time", nu.getDeviceTime().timestampMilli());
             obj.put("data_rosetta_unit", nu.getRosettaUnit());
             obj.put("data_rosetta_metric", nu.getRosettaMetric());
             obj.put("data_vendor_metric", nu.vendorMetric);
