@@ -18,7 +18,7 @@ public class IceInstant {
             this.ms = Instant.ofEpochSecond(timestamp / 1000000L, timestamp % 1000000L);
         else if (timeUnit == TimeUnit.NS) {
             this.ms = Instant.ofEpochSecond(timestamp / 1000000000L, timestamp % 1000000000L);
-            System.err.println("[WARNING] Using IceInstant with nanoseconds can lead to wrapping around to Long.MIN_VALUE.");
+//            System.err.println("[WARNING] Using IceInstant with nanoseconds can lead to wrapping around to Long.MIN_VALUE.");
         }
         else {
             throw new UnsupportedOperationException("TimeUnit " + timeUnit.toString() + " is not supported by IceInstant.");
@@ -43,5 +43,9 @@ public class IceInstant {
 
     public IceInstant refineResolutionForFrequency(int hertz, int size) {
         return this;
+    }
+
+    public IceInstant deepCopy() {
+        return new IceInstant(this.ms.getNano(), TimeUnit.NS);
     }
 }

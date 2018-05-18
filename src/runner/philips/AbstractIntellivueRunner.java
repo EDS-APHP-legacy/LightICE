@@ -27,6 +27,7 @@ import drivers.philips.intellivue.dataexport.event.MdsCreateEvent;
 import datatypes.SampleArray;
 import ice.ConnectionState;
 import datatypes.Numeric;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,7 +321,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         // for the 62.5Hz case we use two seconds (125 samples)
         log.info("Start emit fast data for period " + PERIOD + "ms");
         //TODO: Configurable Emit Period
-        emitFastData = executor.scheduleAtFixedRate(new EmitData(),2 * PERIOD - System.currentTimeMillis() % PERIOD, PERIOD, TimeUnit.MILLISECONDS);
+        emitFastData = executor.scheduleAtFixedRate(new EmitData(),5 * PERIOD - System.currentTimeMillis() % PERIOD, PERIOD, TimeUnit.MILLISECONDS);
     }
     private synchronized void stopEmitFastData() {
         emitFastData.cancel(false);
@@ -334,53 +335,53 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         public EmitData() {
         }
 
-        private ObservedValue[] observedValues = new ObservedValue[10];
-        private Integer[] handles = new Integer[10];
-
         @Override
         public void run() {
             try {
-                observedValues = sampleArrayCache.keySet().toArray(observedValues);
                 IceInstant fakeSampleTime = IceInstant.now(); // new DomainClock().instant();
 
-                for(ObservedValue ov : observedValues) {
-                    if(null == ov) {
-                        break;
-                    }
-                    Map<Integer, SampleCache> sampleCacheByHandle = sampleArrayCache.get(ov);
-                    handles = sampleCacheByHandle.keySet().toArray(handles);
-                    for(Integer handle : handles) {
-                        if(null == handle) {
-                            break;
-                        }
-                        SampleCache sampleCache = sampleCacheByHandle.get(handle);
-                        InstanceHolder<SampleArray> holder = getSampleArrayUpdate(ov, handle);
-                        RelativeTime rt = handleToUpdatePeriod.get(handle);
-                        if (null == rt || null == sampleCache || null == unitCode) {
-                            log.warn("No RelativeTime for handler=" + handle + " rt=" + rt + " sampleCache=" + sampleCache + " unitCode="+unitCode);
+                // For k, v in sampleArrayCache...
+                for(Map.Entry<ObservedValue, Map<Integer, SampleCache>> entry : sampleArrayCache.entrySet()){
+                    ObservedValue observedValue = entry.getKey();
+                    Map<Integer, SampleCache> sampleCacheByHandle = entry.getValue();
+
+                    // For kk, vv in sampleCacheByHandle...
+                    for (Map.Entry<Integer, SampleCache> subentry : sampleCacheByHandle.entrySet()) {
+                        Integer handleId = subentry.getKey();
+                        SampleCache sampleCache = subentry.getValue();
+
+                        InstanceHolder<SampleArray> holder = getSampleArrayUpdate(observedValue, handleId);
+
+                        // Get the time period over which values are sampled for this handle
+                        RelativeTime rt = handleToUpdatePeriod.get(handleId);
+
+                        if (null == rt || null == sampleCache) {
+                            log.warn("No RelativeTime for handle=" + handleId + " rt=" + rt + " sampleCache=" + sampleCache + " unitCode="+unitCode);
                             continue;
                         }
-                        int samples = (int) (PERIOD / rt.toMilliseconds());
+//                        int samples = (int) (PERIOD / rt.toMilliseconds());
 
                         if(null != holder) {
                             synchronized(sampleCache) {
-                                Collection<Number> c = sampleCache.emitSamples(samples, holder.data.getRosettaMetric() +" "+holder.data.instanceId);
+                                System.out.println("Getting samples from sampleCache... (holder not null)");
+                                Pair<IceInstant, List<Number>> c = sampleCache.emitSamples(holder.data.getRosettaMetric() + " " + holder.data.instanceId);
                                 if(null == c) {
-                                    putSampleArrayUpdate(ov, handle, null);
+                                    putSampleArrayUpdate(observedValue, handleId, null);
                                 } else {
-                                    sampleArraySample(holder.data, c, null, fakeSampleTime);
+                                    sampleArraySample(holder.data, c.getValue(), c.getKey(), fakeSampleTime);
                                 }
                             }
                         } else {
-                            String rosettaMetric = sampleArrayRosettaMetrics.get(ov);
+                            String rosettaMetric = sampleArrayRosettaMetrics.get(observedValue);
                             if (rosettaMetric == null)
                                 rosettaMetric = "";
-                            UnitCode unitCode = handleToUnitCode.get(handle);
+                            UnitCode unitCode = handleToUnitCode.get(handleId);
                             synchronized(sampleCache) {
+                                System.out.println("Getting samples from sampleCache... (holder not null)");
                                 putSampleArrayUpdate(
-                                        ov, handle,
-                                        sampleArraySample(getSampleArrayUpdate(ov, handle), sampleCache.emitSamples(samples, rosettaMetric+" "+handle),
-                                                rosettaMetric, ov.toString(), handle,
+                                        observedValue, handleId,
+                                        sampleArraySample(getSampleArrayUpdate(observedValue, handleId), sampleCache.emitSamples(rosettaMetric+" "+handleId),
+                                                rosettaMetric, observedValue.toString(), handleId,
                                                 PhilipsToRosettaMapping.units(unitCode),
                                                 (int)(1000L / rt.toMilliseconds()), fakeSampleTime));
                             }
@@ -393,6 +394,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             }
         }
     }
+
+
 
     private class IntellivueExt extends Intellivue {
 
@@ -727,10 +730,9 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             if (intellivueRelativeClock == null) {
                 log.error("intellivueRelativeClock not initialized with setDeviceStartTime!");
             }
-            IceInstant deviceInstant = intellivueRelativeClock.instantFromRelative(result.getRelativeTime());
+            IceInstant deviceTime = intellivueRelativeClock.instantFromRelative(result.getRelativeTime());
             IceInstant referenceTime = this.referenceClock.instant();
 
-            long now = System.currentTimeMillis();
             // we could track gaps in poll sequence numbers but instead we're
             // relying on consumers of the data
             // to observe a gap in the data timestamps
@@ -738,7 +740,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     && result.getPolledObjType().getOidType().getType() == ObjectClass.NOM_MOC_VMO_AL_MON.asInt()) {
                 for (SingleContextPoll sop : result.getPollInfoList()) {
                     for (ObservationPoll op : sop.getPollInfo()) {
-//                        int handler = op.getHandleId().getHandleId();
+//                        int handlerPeriod = op.getHandleId().getHandleId();
                         handlerAlert(op.getAttributes());
                     }
                 }
@@ -749,45 +751,55 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                         int handle = op.getHandleId().getHandleId();
                         AttributeValueList attrs = op.getAttributes();
 
-                        Attribute<NumericObservedValue> observed = attrs.getAttribute(AbstractIntellivueRunner.this.observed);
-                        Attribute<CompoundNumericObservedValue> compoundObserved = attrs.getAttribute(AbstractIntellivueRunner.this.compoundObserved);
-                        Attribute<RelativeTime> period = attrs.getAttribute(AbstractIntellivueRunner.this.period);
-                        Attribute<SampleArraySpecification> spec = attrs.getAttribute(AbstractIntellivueRunner.this.spec);
-                        Attribute<SampleArrayCompoundObservedValue> cov = attrs.getAttribute(AbstractIntellivueRunner.this.cov);
-                        Attribute<SampleArrayObservedValue> v = attrs.getAttribute(AbstractIntellivueRunner.this.v);
-                        Attribute<ScaleAndRangeSpecification> sar = attrs.getAttribute(AbstractIntellivueRunner.this.sar);
+                        // Here, depending on the type of data we received, we can call sub-handlerSampleArray functions:
+
+
+                        // Unit-Code (from the dimension nomenclature partition) of the metric value.
                         Attribute<EnumValue<UnitCode>> unitCode = attrs.getAttribute(AbstractIntellivueRunner.this.unitCode);
-
                         if(null != unitCode) {
-                            handler(handle, unitCode.getValue().getEnum());
+                            handlerUnitCode(handle, unitCode.getValue().getEnum());
                         }
 
+                        // Numeric data
+                        Attribute<NumericObservedValue> observed = attrs.getAttribute(AbstractIntellivueRunner.this.observed);
                         if (null != observed) {
-                            handler(handle, deviceInstant, referenceTime, observed.getValue());
+                            handlerNumeric(handle, deviceTime, referenceTime, observed.getValue());
                         }
 
+                        // Multiple Numeric data
+                        Attribute<CompoundNumericObservedValue> compoundObserved = attrs.getAttribute(AbstractIntellivueRunner.this.compoundObserved);
                         if (null != compoundObserved) {
-                            for (NumericObservedValue nov : compoundObserved.getValue().getList()) {
-                                handler(handle, deviceInstant, referenceTime, nov);
-                            }
+                            for (NumericObservedValue nov : compoundObserved.getValue().getList())
+                                handlerNumeric(handle, deviceTime, referenceTime, nov);
                         }
 
+                        // Specifies the time period over which values are sampled; only applicable if values are sampled periodically
+                        Attribute<RelativeTime> period = attrs.getAttribute(AbstractIntellivueRunner.this.period);
                         if (null != period) {
-                            handler(handle, period.getValue());
+                            handlerPeriod(handle, period.getValue());
                         }
+
+                        Attribute<ScaleAndRangeSpecification> sar = attrs.getAttribute(AbstractIntellivueRunner.this.sar);
                         if (null != sar) {
-                            handler(handle, sar.getValue());
+                            handlerScaleAndRange(handle, sar.getValue());
                         }
+
+                        // Sample Array Specification
+                        Attribute<SampleArraySpecification> spec = attrs.getAttribute(AbstractIntellivueRunner.this.spec);
                         if (null != spec) {
-                            handler(handle, spec.getValue());
+                            handlerSampleArraySpec(handle, spec.getValue());
                         }
+
+                        // Multiple Sample Array data
+                        Attribute<SampleArrayCompoundObservedValue> cov = attrs.getAttribute(AbstractIntellivueRunner.this.cov);
                         if (null != cov) {
-                            for (SampleArrayObservedValue saov : cov.getValue().getList()) {
-                                handler(handle, deviceInstant, saov, now);
-                            }
+                            for (SampleArrayObservedValue saov : cov.getValue().getList())
+                                handlerSampleArray(handle, deviceTime, saov);
                         }
+
+                        Attribute<SampleArrayObservedValue> v = attrs.getAttribute(AbstractIntellivueRunner.this.v);
                         if (null != v) {
-                            handler(handle, deviceInstant, v.getValue(), now);
+                            handlerSampleArray(handle, deviceTime, v.getValue());
                         }
                     }
                 }
@@ -795,7 +807,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             super.handler(result);
         }
 
-        private final void handler(int handle, IceInstant deviceInstant, IceInstant referenceTime, NumericObservedValue observed) {
+        private final void handlerNumeric(int handle, IceInstant deviceTime, IceInstant referenceTime, NumericObservedValue observed) {
             // log.debug(observed.toString());
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
@@ -805,9 +817,9 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
 
                     if (observed.getMsmtState().isUnavailable())
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceInstant, referenceTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
                     else
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceInstant, referenceTime));
+                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
 
                 } else {
                     log.debug("Unknown numeric:" + observed);
@@ -840,7 +852,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
 
 
-        protected void handler(int handle, IceInstant deviceSampleTime, SampleArrayObservedValue saov, long now) {
+        protected void handlerSampleArray(int handle, IceInstant deviceTime, SampleArrayObservedValue saov) {
             short[] bytes = saov.getValue();
             ObservedValue ov = ObservedValue.valueOf(saov.getPhysioId().getType());
             if (null == ov) {
@@ -855,7 +867,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     UnitCode unitCode = handleToUnitCode.get(handle);
                     RelativeTime relativeTime = handleToUpdatePeriod.get(handle);
                     if (null == sampleArraySpecification || null == relativeTime || null == scaleAndRangeSpecification || null == unitCode) {
-                        log.warn("No SampleArraySpecification or RelativeTime for handler=" + handle + " rt=" + relativeTime + " sas=" + sampleArraySpecification + " sar=" + scaleAndRangeSpecification + " unitCode=" + unitCode);
+                        log.warn("No SampleArraySpecification or RelativeTime for handlerPeriod=" + handle + " rt=" + relativeTime + " sas=" + sampleArraySpecification + " sar=" + scaleAndRangeSpecification + " unitCode=" + unitCode);
                     } else {
                         int cnt = sampleArraySpecification.getArraySize();
                         // TODO these were once cached, no?
@@ -889,7 +901,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                                 handleToSampleCache.put(handle, sampleCache);
                             }
 
-                            sampleCache.addNewSamples(w.getNumbers());
+                            sampleCache.addNewSamples(w.getNumbers(), deviceTime);
                         }
                     }
                 }
@@ -897,28 +909,28 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
 
-        protected void handler(int handle, ScaleAndRangeSpecification sar) {
+        protected void handlerScaleAndRange(int handle, ScaleAndRangeSpecification sar) {
             handleToScaleAndRangeSpecification.put(handle, sar.clone());
             if(log.isTraceEnabled()) {
                 log.trace("Received a ScaleAndRangeSpecification for " + handle + " " + sar);
             }
         }
 
-        protected void handler(int handle, UnitCode unitCode) {
+        protected void handlerUnitCode(int handle, UnitCode unitCode) {
             handleToUnitCode.put(handle, unitCode);
             if(log.isTraceEnabled()) {
                 log.trace("Received a unitCode for " + handle + " " + unitCode);
             }
         }
 
-        protected void handler(int handle, SampleArraySpecification spec) {
+        protected void handlerSampleArraySpec(int handle, SampleArraySpecification spec) {
             handleToSampleArraySpecification.put(handle, spec.clone());
             if(log.isTraceEnabled()) {
                 log.trace("Received a SampleArraySpecification for " + handle + " " + spec);
             }
         }
 
-        protected void handler(int handle, RelativeTime period) {
+        protected void handlerPeriod(int handle, RelativeTime period) {
             RelativeTime newPeriod = handleToUpdatePeriod.get(handle);
             if (null == newPeriod) {
                 newPeriod = new RelativeTime();
@@ -1001,6 +1013,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
     }
 
+
+    // Maps from a handle_id (the type of data received)
     protected final Map<Integer, RelativeTime> handleToUpdatePeriod = new HashMap<>();
     protected final Map<Integer, SampleArraySpecification> handleToSampleArraySpecification = new HashMap<>();
     protected final Map<Integer, ScaleAndRangeSpecification> handleToScaleAndRangeSpecification = new HashMap<>();

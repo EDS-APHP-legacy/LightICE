@@ -45,6 +45,6 @@ public class GlobalHandleId extends HandleId {
 
     @Override
     public java.lang.String toString() {
-        return "[mdsContext=" + mdsContext + ",handler=" + getHandleId() + "]";
+        return "[mdsContext=" + mdsContext + ",handlerPeriod=" + getHandleId() + "]";
     }
 }

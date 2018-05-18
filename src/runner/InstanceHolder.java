@@ -18,6 +18,6 @@ public class InstanceHolder<T> {
 
     @Override
     public String toString() {
-        return "[data=" + data + ",handler=" + handle + "]";
+        return "[data=" + data + ",handlerPeriod=" + handle + "]";
     }
 }

@@ -370,18 +370,19 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handler(SinglePollDataResult result) {
+        // TODO: what is this for?
     }
 
     protected void handler(ExtendedPollDataResult result) {
-
+        // TODO: what is this for?
     }
 
     protected void handler(SetResult result, boolean confirmed) {
-
+        // TODO: what is this for?
     }
 
     protected void handler(Get get) {
-
+        // TODO: what is this for?
     }
 
     protected void handler(Set set, boolean confirmed) throws IOException {
@@ -396,6 +397,7 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handler(GetResult result) {
+        // TODO: what is this for?
     }
 
     protected void handler(ActionResult action, boolean request) {
@@ -432,11 +434,11 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handler(SinglePollDataRequest action) {
-
+        // TODO: what is this for?
     }
 
     protected void handler(ExtendedPollDataRequest action) {
-
+        // TODO: what is this for?
     }
 
     protected void handler(DataExportResult message) {
@@ -654,6 +656,8 @@ public class Intellivue implements NetworkConnection {
                     time.setTime(System.currentTimeMillis());
                     log.trace("From " + channel.getRemoteAddress() + " on " + channel.socket().getLocalAddress() + "\n" + HexUtil.dump(inBuffer, 50));
                 }
+
+                // Handle the received message
                 handler(sockaddr, protocol.parse(inBuffer), sk);
             }
         }

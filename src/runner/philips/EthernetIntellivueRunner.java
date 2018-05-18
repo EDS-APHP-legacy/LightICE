@@ -15,7 +15,6 @@ package runner.philips;
 import common.DeviceIdentity;
 import ice.ConnectionState;
 import ice.ConnectionType;
-import runner.AbstractDeviceRunner;
 import drivers.philips.intellivue.Intellivue;
 import drivers.philips.intellivue.Network;
 

@@ -51,7 +51,7 @@ public class ObservationPollImpl implements ObservationPoll {
 
     @Override
     public String toString() {
-        return "[handler=" + handleId + ",attrList=[" + attrList + "]]";
+        return "[handlerPeriod=" + handleId + ",attrList=[" + attrList + "]]";
     }
 
 }

@@ -1,42 +1,46 @@
-# OpenICE Light
+# LightICE
 
-This is a light version of [https://github.com/mdpnp/mdpnp](https://github.com/mdpnp/mdpnp).
-It is DDS-free and aims to only use the Java standard library. However, some useful classes of DDS have been copied for this project.
+Health care monitor-agnostic data collection software (high and low frequency data).
+
+This project is part of the largest [Pancarte project](https://pancarte.eds.ovh).
 
 For now, it only works with:
 
-* Philips Intellivue (via RS-232)
-
-Features:
-
-* [x] Listen multiple devices at the same time
-* [x] An API to easily export data from devices
-* [x] Write to Kafka (using the API)
-* [x] Write to STDOUT (using the API)
+* Philips MPxx (via RS-232)
+* Philips MPxx (via Ethernet)
 
 ## Running it
 
-### Configuration
+### Launch the Main 
+
+#### Configuration
 
 You should create a `conf.json` file in the current directory. An example of the configuration is available in example.conf.json.
 
-### Linux
+#### Linux
 
-```
+```commandline
 ./gradlew run
 ```
 
 Have fun!
 
+### Building a .jar (if you know what you are doing)
+
+
+```commandline
+./gradlew publishToMavenLocal
+ls build/libs/
+```
+
 ## Development
 
-### Create avro serializer
-
-```
-wget http://apache.crihan.fr/dist/avro/avro-1.8.2/java/avro-tools-1.8.2.jar;
-java -jar avro-tools-1.8.2.jar compile schema resources/records.avsc src/
-```
+This project accepts Pull/Requests and we will be happy to answer your issues with LightICE.
+To add a new monitor in the list of supported monitors, we need a monitor to test it, this also implies time, if you need a monitor that is not currently supported, don't hesitate to participate in this project.  
 
 ## Licence
 
-* [MDPNP Licence](https://github.com/mdpnp/mdpnp/blob/master/interop-lab/demo-apps/LICENSE.txt)
+This project is a light version of [MD PnP OpenICE](https://github.com/mdpnp/mdpnp).
+It is [DDS](https://en.wikipedia.org/wiki/Data_Distribution_Service)-free (as opposed to OpenICE).
+
+The LICENCE: [MDPNP Licence](MDPNP_LICENCE)

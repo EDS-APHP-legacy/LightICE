@@ -34,7 +34,7 @@ import java.util.Arrays;
  * 
  * This encode/decode algorithm doesn't create any temporary arrays as many
  * other codecs do, it only allocates the resulting array. This produces less
- * garbage and it is possible to handler arrays twice as large as algorithms that
+ * garbage and it is possible to handlerPeriod arrays twice as large as algorithms that
  * create a temporary array. (E.g. Jakarta Commons Codec). It is unknown whether
  * Sun's <code>sun.misc.Encoder()/Decoder()</code> produce temporary arrays but
  * since performance is quite low it probably does.<br>
@@ -174,7 +174,7 @@ public class Base64 {
 
     /**
      * Decodes a BASE64 encoded char array. All illegal characters will be
-     * ignored and can handler both arrays with and without line separators.
+     * ignored and can handlerPeriod both arrays with and without line separators.
      * 
      * @param sArr
      *            The source array. <code>null</code> or length 0 will return an
@@ -378,7 +378,7 @@ public class Base64 {
 
     /**
      * Decodes a BASE64 encoded byte array. All illegal characters will be
-     * ignored and can handler both arrays with and without line separators.
+     * ignored and can handlerPeriod both arrays with and without line separators.
      * 
      * @param sArr
      *            The source array. Length 0 will return an empty array.
@@ -540,7 +540,7 @@ public class Base64 {
 
     /**
      * Decodes a BASE64 encoded <code>String</code>. All illegal characters will
-     * be ignored and can handler both strings with and without line separators.<br>
+     * be ignored and can handlerPeriod both strings with and without line separators.<br>
      * <b>Note!</b> It can be up to about 2x the speed to call
      * <code>decode(str.toCharArray())</code> instead. That will create a
      * temporary array though. This version will use <code>str.charAt(i)</code>

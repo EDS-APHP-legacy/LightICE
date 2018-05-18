@@ -1,53 +1,37 @@
 package runner.philips;
 
+import common.time.IceInstant;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import runner.AbstractDeviceRunner;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class SampleCache {
     protected static final Logger log = LoggerFactory.getLogger(AbstractDeviceRunner.class);
 
-    private final List<Number> newSamples = Collections.synchronizedList(new ArrayList<Number>());
-    private final List<Number> oldSamples = Collections.synchronizedList(new ArrayList<Number>());
+    private final List<Number> valueCache = Collections.synchronizedList(new ArrayList<>());
+    private IceInstant startTime = null;
 
-    public void addNewSamples(Collection<Number> coll) {
-        newSamples.addAll(coll);
+    public void addNewSamples(Collection<Number> coll, IceInstant deviceTime) {
+        synchronized (valueCache) {
+            if (startTime == null)
+                startTime = deviceTime;
+            valueCache.addAll(coll);
+        }
     }
 
-    public Collection<Number> emitSamples(int n, String s) {
-        synchronized(newSamples) {
-            if(newSamples.isEmpty()) {
-                log.warn(s+" no new samples to emit");
+    public Pair<IceInstant,List<Number>> emitSamples(String s) {
+        synchronized (valueCache) {
+            if (valueCache.isEmpty())
                 return null;
-            }
+            List<Number> values = new ArrayList<>(valueCache);
+            valueCache.clear();
 
-            if(newSamples.size() < n) {
-                log.warn(s+" will repeat " + (n - newSamples.size()) + " old samples to make up a shortfall");
-            }
-            // Move up to n samples from the old list to the new
-            List<Number> oldestNewSamples = newSamples.subList(0, n > newSamples.size() ? newSamples.size() : n);
-
-            oldSamples.addAll(oldestNewSamples);
-            oldestNewSamples.clear();
+            Pair<IceInstant, List<Number>> result = new Pair<>(startTime, values);
+            startTime = null;
+            return result;
         }
-        synchronized(oldSamples) {
-            // If we have insufficient oldSamples (shouldn't happen except maybe at initialization) fill in values
-            if(oldSamples.size() < n) {
-                log.warn(s+" filling in " + (n - oldSamples.size()) + " zeros; this should not continue happening");
-                while(oldSamples.size() < n) {
-                    oldSamples.add(0, 0);
-                }
-            }
-            // If we have extra oldSamples then remove them
-            if(oldSamples.size() > n) {
-                oldSamples.subList(0, oldSamples.size()-n).clear();
-            }
-        }
-        return oldSamples;
     }
 }

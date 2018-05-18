@@ -46,8 +46,7 @@ public class JsonSerializer extends Serializer {
                             "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
                             "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
                             "\"data_instance\": \"" + sa.instanceId + "\", " +
-                            "\"data_value\": " + values[i] + ", " +
-                            "\"data_timestamp_nano\": " + timestampsNano[i] +
+                            "\"data_value\": " + values[i] +
                             "}");
                 }
             }
@@ -85,8 +84,7 @@ public class JsonSerializer extends Serializer {
                         "\"data_rosetta_unit\": \"" + sa.getRosettaUnit() + "\", " +
                         "\"data_vendor_metric\": \"" + sa.vendorMetric + "\", " +
                         "\"data_instance\": \"" + sa.instanceId + "\", " +
-                        "\"data_values\": [" + valuesStrBuffer.toString() + "], " +
-                        "\"data_timestamps_nano\": [" + timestampsStrBuffer.toString() + "]" +
+                        "\"data_values\": [" + valuesStrBuffer.toString() + "]" +
                         "}");
             }
             return result;
