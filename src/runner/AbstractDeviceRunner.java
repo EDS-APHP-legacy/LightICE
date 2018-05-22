@@ -166,7 +166,7 @@ public abstract class AbstractDeviceRunner {
             throw new IllegalStateException("Please populate deviceIdentity.unique_device_identifier before calling createSampleArrayInstance");
         }
 
-        InstanceHolder<SampleArray> holder = new InstanceHolder<SampleArray>();
+        InstanceHolder<SampleArray> holder = new InstanceHolder<>();
         holder.data = new SampleArray();
         holder.data.deviceIdentity = deviceIdentity;
         holder.data.setRosettaMetric(rosettaMetric);

@@ -31,6 +31,7 @@ public final class SampleCache {
 
             Pair<IceInstant, List<Number>> result = new Pair<>(startTime, values);
             startTime = null;
+
             return result;
         }
     }

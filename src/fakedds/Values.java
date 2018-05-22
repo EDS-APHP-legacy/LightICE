@@ -3,15 +3,23 @@ package fakedds;
 import ice.CdrHelper;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Values implements Copyable, Serializable
 {
 
+    //TODO: why 1024 and does it limit bandwidth?
     public FloatSeq userData = new FloatSeq((1024));
 
 
     public Values() {
 
+    }
+
+    public float[] getValuesAsArray() {
+        float[] result = Arrays.copyOfRange(this.userData.getPrimitiveArray(), 0, this.userData.size());
+        assert result.length == this.userData.size();
+        return result;
     }
 
 

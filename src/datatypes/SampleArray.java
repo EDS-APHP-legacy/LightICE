@@ -129,7 +129,7 @@ public class SampleArray extends RosettaTimeAwareData
     }
 
     public float[] getValues() {
-        return this.values.userData.getPrimitiveArray();
+        return this.values.getValuesAsArray();
     }
 
     public long[] getTimestamps(boolean fromStart, Time_t time) {
