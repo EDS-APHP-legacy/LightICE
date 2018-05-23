@@ -64,9 +64,9 @@ public class MapSerializer extends Serializer {
             obj.put("data_type", "sample");
             obj.put("data_presentation_time", nu.getPresentationTime().timestampMilli());
             obj.put("data_device_time", nu.getDeviceTime().timestampMilli());
-            obj.put("data_rosetta_unit", nu.getRosettaUnit());
             obj.put("data_rosetta_metric", nu.getRosettaMetric());
-            obj.put("data_vendor_metric", nu.vendorMetric);
+            obj.put("data_rosetta_unit", nu.getRosettaUnit());
+            obj.put("data_vendor_metric", nu.getVendorMetric());
             obj.put("data_instance_id", nu.instanceId);
             obj.put("data_value", nu.value);
             result.add(obj);

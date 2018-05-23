@@ -68,7 +68,7 @@ public class AvroSerializer extends Serializer {
         } else if(data instanceof Numeric) {
             Numeric nu = (Numeric) data;
 
-            DataSingle dataSingle = new DataSingle(nu.getRosettaUnit(), nu.getRosettaMetric(), nu.vendorMetric, nu.instanceId, nu.value, nu.getTimestampDeviceTime());
+            DataSingle dataSingle = new DataSingle(nu.getRosettaUnit(), nu.getRosettaMetric(), nu.getVendorMetric(), nu.instanceId, nu.value, nu.getTimestampDeviceTime());
             SingleValue singleValue = new SingleValue(nu.dataType, deviceInfo, dataSingle);
 
             try {

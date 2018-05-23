@@ -373,8 +373,10 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                             }
                         } else {
                             String rosettaMetric = sampleArrayRosettaMetrics.get(observedValue);
-                            if (rosettaMetric == null)
+                            if (rosettaMetric == null) {
                                 rosettaMetric = "";
+                                log.warn("Unknown waveform:" + observedValue);
+                            }
                             UnitCode unitCode = handleToUnitCode.get(handleId);
                             synchronized(sampleCache) {
                                 System.out.println("Getting samples from sampleCache... (holder not null)");
@@ -812,18 +814,20 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
             ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
             if (null != ov) {
                 String rosettaMetric = numericRosettaMetrics.get(ov);
-                if (null != rosettaMetric) {
-
-                    UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
-
-                    if (observed.getMsmtState().isUnavailable())
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
-                    else
-                        putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
-
-                } else {
-                    log.debug("Unknown numeric:" + observed);
+                // Here rosettaMetric is null if no mapping has already been done
+                if (rosettaMetric == null) {
+                    log.warn("Unknown numeric:" + observed);
                 }
+
+                UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
+
+                if (observed.getMsmtState().isUnavailable())
+                    putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
+                else
+                    putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
+            }
+            else {
+                log.warn("Unknown Observed Value: PhysioIdType=" + observed.getPhysioId().getType() + ", observed=" + observed);
             }
 
         }

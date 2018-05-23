@@ -10,30 +10,40 @@ public class Numeric extends RosettaTimeAwareData
 
     public DeviceIdentity deviceIdentity;
 
-    public String vendorMetric = ""; /* maximum length = (64) */
+    // TODO: get/set for vendorMetric
+    private String vendorMetric = ""; /* maximum length = (64) */
     public int instanceId = 0;
     public float value = 0;
 
-
     public Numeric() {
+    }
 
+    public void setVendorMetric(String vendorMetric) {
+        if (vendorMetric == null)
+            this.vendorMetric = "";
+        else if (vendorMetric.length() > 64) {
+            System.err.println("Rosetta metric string too long (>64) - Taking only the first 64 characters, but you should fix this!");
+            this.vendorMetric = vendorMetric.substring(0, 64);
+        }
+        else {
+            this.vendorMetric = vendorMetric;
+        }
+    }
+
+    public String getVendorMetric() {
+        return vendorMetric;
     }
 
     public boolean equals(Object o) {
-
         if (o == null) {
             return false;
         }
-
-
 
         if(getClass() != o.getClass()) {
             return false;
         }
 
         Numeric otherObj = (Numeric)o;
-
-
 
         if(!deviceIdentity.getUniqueDeviceIdentifier().equals(otherObj.deviceIdentity.getUniqueDeviceIdentifier())) {
             return false;

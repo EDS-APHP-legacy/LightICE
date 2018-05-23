@@ -105,9 +105,9 @@ public class JsonSerializer extends Serializer {
                       "\"data_type\": \"numeric\"," +
                       "\"data_presentation_time\": " + nu.getPresentationTime().timestampMilli() + "," +
                       "\"data_device_time\": " + nu.getDeviceTime().timestampMilli() + "," +
-                      "\"data_rosetta_metric\": \"" + nu.getRosettaUnit() + "\", " +
+                      "\"data_rosetta_metric\": \"" + nu.getRosettaMetric() + "\", " +
                       "\"data_rosetta_unit\": \"" + nu.getRosettaUnit() + "\", " +
-                      "\"data_vendor_metric\": \"" + nu.vendorMetric + "\", " +
+                      "\"data_vendor_metric\": \"" + nu.getVendorMetric() + "\", " +
                       "\"data_instance\": \"" + nu.instanceId + "\", " +
                       "\"data_value\": " + nu.value +
                     "}");

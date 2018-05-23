@@ -13,7 +13,7 @@ public class SampleArray extends RosettaTimeAwareData
 
     public DeviceIdentity deviceIdentity;
 
-    public String vendorMetric = ""; /* maximum length = (64) */
+    public String vendorMetric = "";
     public int instanceId = 0;
     public int frequency = 0;
     public Values values = (Values) Values.create();
@@ -23,6 +23,22 @@ public class SampleArray extends RosettaTimeAwareData
 
     }
 
+    public void setVendorMetric(String vendorMetric) {
+        if (vendorMetric == null) {
+            this.vendorMetric = "";
+        }
+        else if (vendorMetric.length() > 64) {
+            System.err.println("Rosetta metric string too long (>64) - Taking only the first 64 characters, but you should fix this!");
+            this.vendorMetric = vendorMetric.substring(0, 64);
+        }
+        else {
+            this.vendorMetric = vendorMetric;
+        }
+    }
+
+    public String getVendorMetric() {
+        return this.vendorMetric;
+    }
     public boolean equals(Object o) {
 
         if (o == null) {

@@ -12,7 +12,10 @@ abstract class RosettaTimeAwareData extends Data {
     protected String rosettaUnit = ""; /* maximum length = (64) */
 
     public void setRosettaMetric(String rosettaMetric) {
-        if (rosettaMetric.length() > 64) {
+        if (rosettaMetric == null) {
+            this.rosettaMetric = "";
+        }
+        else if (rosettaMetric.length() > 64) {
             System.err.println("Rosetta metric string too long (>64) - Taking only the first 64 characters, but you should fix this!");
             this.rosettaMetric = rosettaMetric.substring(0, 64);
         }
@@ -22,7 +25,10 @@ abstract class RosettaTimeAwareData extends Data {
     }
 
     public void setRosettaUnit(String rosettaUnit) {
-        if (rosettaUnit.length() > 64) {
+        if (rosettaUnit == null) {
+            this.rosettaUnit = "";
+        }
+        else if (rosettaUnit.length() > 64) {
             System.err.println("Rosetta unit string too long (>64) - Taking only the first 64 characters, but you should fix this!");
             this.rosettaUnit = rosettaUnit.substring(0, 64);
         }
@@ -35,7 +41,10 @@ abstract class RosettaTimeAwareData extends Data {
         return this.rosettaMetric;
     }
 
+
     public String getRosettaUnit() {
+        if (this.rosettaUnit == null)
+            return "";
         return this.rosettaUnit;
     }
 
