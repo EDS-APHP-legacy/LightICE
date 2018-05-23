@@ -44,7 +44,7 @@ public class EthernetIntellivueRunner extends AbstractIntellivueRunner {
 
     @Override
     public boolean connect() {
-        String address = this.deviceIdentity.getSerialPort();
+        String address = this.deviceIdentity.getAddr().getSerialAddr();
         if (null == address || "".equals(address)) {
             // No address provided, listen for broadcast announcement
             try {

@@ -29,7 +29,7 @@ public class MapSerializer extends Serializer {
                 obj.put("deviceinfo_sector", sa.deviceIdentity.getSector());
                 obj.put("deviceinfo_room", sa.deviceIdentity.getRoom());
                 obj.put("deviceinfo_alias", sa.deviceIdentity.getAlias());
-                obj.put("deviceinfo_serial_port", sa.deviceIdentity.getSerialPort());
+                obj.put("deviceinfo_serial_port", sa.deviceIdentity.getAddrString());
                 obj.put("deviceinfo_driver", sa.deviceIdentity.getDriver());
                 obj.put("deviceinfo_manufacturer", sa.deviceIdentity.getManufacturer());
                 obj.put("deviceinfo_model", sa.deviceIdentity.getModel());
@@ -55,7 +55,7 @@ public class MapSerializer extends Serializer {
             obj.put("deviceinfo_sector", nu.deviceIdentity.getSector());
             obj.put("deviceinfo_room", nu.deviceIdentity.getRoom());
             obj.put("deviceinfo_alias", nu.deviceIdentity.getAlias());
-            obj.put("deviceinfo_serial_port", nu.deviceIdentity.getSerialPort());
+            obj.put("deviceinfo_serial_port", nu.deviceIdentity.getAddrString());
             obj.put("deviceinfo_driver", nu.deviceIdentity.getDriver());
             obj.put("deviceinfo_manufacturer", nu.deviceIdentity.getManufacturer());
             obj.put("deviceinfo_model", nu.deviceIdentity.getModel());

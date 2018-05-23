@@ -10,9 +10,9 @@ public class Device {
     public DeviceIdentity deviceIdentity;
     private AbstractDeviceRunner runner;
 
-    public Device(String site, String service, String sector, String room, String alias, String serialPort, String driver) throws IOException, ClassNotFoundException {
+    public Device(String site, String service, String sector, String room, String alias, NetworkAddress addr, String driver) throws IOException, ClassNotFoundException {
 
-        this.deviceIdentity = new DeviceIdentity(site, service, sector, room, alias, serialPort, driver);
+        this.deviceIdentity = new DeviceIdentity(site, service, sector, room, alias, addr, driver);
 
         this.runner = AbstractDeviceRunner.resolveRunner(this.deviceIdentity);
     }

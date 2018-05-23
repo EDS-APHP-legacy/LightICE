@@ -31,7 +31,7 @@ public class SerialIntellivueRunner extends AbstractIntellivueRunner {
             InetSocketAddress serialSide = new InetSocketAddress(InetAddress.getLoopbackAddress(), ports[0]);
             InetSocketAddress networkSide = new InetSocketAddress(InetAddress.getLoopbackAddress(), ports[1]);
             state(ConnectionState.Connecting, "initializing RS-232 to UDP adapter");
-            rs232Adapter = new RS232Adapter(this.deviceIdentity.getSerialPort(), serialSide, networkSide, AbstractDeviceRunner.threadGroup, networkLoop);
+            rs232Adapter = new RS232Adapter(this.deviceIdentity.getAddr().getSerialAddr(), serialSide, networkSide, AbstractDeviceRunner.threadGroup, networkLoop);
             connect(serialSide, networkSide);
             return true;
         } catch (IOException e) {

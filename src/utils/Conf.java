@@ -11,6 +11,7 @@ import export.writers.StdoutWriter;
 import export.writers.Writer;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -99,15 +100,32 @@ public class Conf {
         }
 
         for (JsonValue value : Json.parse(readFileToString(configurationPath)).asObject().get("servers").asArray()) {
-            Device device = new Device(
+            Device device = null;
+            if (!value.asObject().get("serialPort").isNull()) {
+                device = new Device(
+                        value.asObject().get("alias").asString(),
+                        value.asObject().get("site").asString(),
+                        value.asObject().get("service").asString(),
+                        value.asObject().get("sector").asString(),
+                        value.asObject().get("room").asString(),
+                        new NetworkAddress(value.asObject().get("serialPort").asString()),
+                        value.asObject().get("driver").asString()
+                );
+            }
+            else if (!value.asObject().get("host").isNull() && !value.asObject().get("port").isNull()) {
+                device = new Device(
                     value.asObject().get("alias").asString(),
                     value.asObject().get("site").asString(),
                     value.asObject().get("service").asString(),
                     value.asObject().get("sector").asString(),
                     value.asObject().get("room").asString(),
-                    value.asObject().get("serialPort").asString(),
+                    new NetworkAddress(value.asObject().get("host").asString(), value.asObject().get("port").asInt()),
                     value.asObject().get("driver").asString()
-            );
+                );
+            }
+            if (device == null)
+                throw new UnsupportedEncodingException("Configuration incomplete, please verify it!");
+
             conf.addDevice(device);
         }
 

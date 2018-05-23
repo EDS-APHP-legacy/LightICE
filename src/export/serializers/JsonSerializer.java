@@ -32,7 +32,7 @@ public class JsonSerializer extends Serializer {
                             "\"deviceinfo_sector\": \"" + sa.deviceIdentity.getSector() + "\"," +
                             "\"deviceinfo_room\": \"" + sa.deviceIdentity.getRoom() + "\"," +
                             "\"deviceinfo_alias\": \"" + sa.deviceIdentity.getAlias() + "\"," +
-                            "\"deviceinfo_serial_port\": \"" + sa.deviceIdentity.getSerialPort() + "\"," +
+                            "\"deviceinfo_addr\": {\"" + sa.deviceIdentity.getAddrString() + "\"," +
                             "\"deviceinfo_driver\": \"" + sa.deviceIdentity.getDriver() + "\"," +
                             "\"deviceinfo_manufacturer\": \"" + sa.deviceIdentity.getManufacturer() + "\"," +
                             "\"deviceinfo_model\": \"" + sa.deviceIdentity.getModel() + "\"," +
@@ -70,13 +70,13 @@ public class JsonSerializer extends Serializer {
                         "\"deviceinfo_sector\": \"" + sa.deviceIdentity.getSector() + "\"," +
                         "\"deviceinfo_room\": \"" + sa.deviceIdentity.getRoom() + "\"," +
                         "\"deviceinfo_alias\": \"" + sa.deviceIdentity.getAlias() + "\"," +
-                        "\"deviceinfo_serial_port\": \"" + sa.deviceIdentity.getSerialPort() + "\"," +
+                        "\"deviceinfo_serial_port\": \"" + sa.deviceIdentity.getAddrString() + "\"," +
                         "\"deviceinfo_driver\": \"" + sa.deviceIdentity.getDriver() + "\"," +
                         "\"deviceinfo_manufacturer\": \"" + sa.deviceIdentity.getManufacturer() + "\"," +
                         "\"deviceinfo_model\": \"" + sa.deviceIdentity.getModel() + "\"," +
                         "\"deviceinfo_serial_number\": \"" + sa.deviceIdentity.getSerialNumber() + "\"," +
                         "\"deviceinfo_operating_system\": \"" + sa.deviceIdentity.getOperatingSystem() + "\"," +
-                        "\"data_type\": \"sample\"," +
+                        "\"data_type\": \"sample_array\"," +
                         "\"data_presentation_time\": " + sa.getPresentationTime().timestampMilli() + "," +
                         "\"data_device_time\": " + sa.getDeviceTime().timestampMilli() + "," +
                         "\"data_frequency\": \"" + sa.frequency + "\", " +
@@ -96,7 +96,7 @@ public class JsonSerializer extends Serializer {
                       "\"deviceinfo_sector\": \"" + nu.deviceIdentity.getSector() + "\"," +
                       "\"deviceinfo_room\": \"" + nu.deviceIdentity.getRoom() + "\"," +
                       "\"deviceinfo_alias\": \"" + nu.deviceIdentity.getAlias() + "\"," +
-                      "\"deviceinfo_serial_port\": \"" + nu.deviceIdentity.getSerialPort() + "\"," +
+                      "\"deviceinfo_serial_port\": \"" + nu.deviceIdentity.getAddrString() + "\"," +
                       "\"deviceinfo_driver\": \"" + nu.deviceIdentity.getDriver() + "\"," +
                       "\"deviceinfo_manufacturer\": \"" + nu.deviceIdentity.getManufacturer() + "\"," +
                       "\"deviceinfo_model\": \"" + nu.deviceIdentity.getModel() + "\"," +

@@ -1,5 +1,7 @@
 package common;
 
+import utils.NetworkAddress;
+
 public class DeviceIdentity {
 
     // Information gathered from the configuration
@@ -8,7 +10,7 @@ public class DeviceIdentity {
     private final String sector;
     private final String room;
     private final String alias;
-    private final String serialPort;
+    private final NetworkAddress addr;
     private final String driver;
 
     // Information gathered by contacting the device
@@ -31,19 +33,19 @@ public class DeviceIdentity {
             UDI_CHARS[x++] = i;
     }
 
-    public DeviceIdentity(String site, String service, String sector, String room, String alias, String serialPort, String driver) {
+    public DeviceIdentity(String site, String service, String sector, String room, String alias, NetworkAddress serialPort, String driver) {
         this.site = site;
         this.service = service;
         this.sector = sector;
         this.room = room;
         this.alias = alias;
-        this.serialPort = serialPort;
+        this.addr = serialPort;
         this.driver = driver;
         this.uniqueDeviceIdentifier = randomUDI();
     }
 
     public static DeviceIdentity fromOther(DeviceIdentity other) {
-        DeviceIdentity di = new DeviceIdentity(other.site, other.service, other.sector, other.room, other.alias, other.serialPort, other.driver);
+        DeviceIdentity di = new DeviceIdentity(other.site, other.service, other.sector, other.room, other.alias, other.addr, other.driver);
         di.manufacturer = other.manufacturer;
         di.model = other.model;
         di.uniqueDeviceIdentifier = other.uniqueDeviceIdentifier;
@@ -136,8 +138,16 @@ public class DeviceIdentity {
         return alias;
     }
 
-    public String getSerialPort() {
-        return serialPort;
+    public NetworkAddress getAddr() {
+        return addr;
+    }
+
+    public String getAddrString() {
+        if (this.addr.isSerial)
+            return this.addr.getSerialAddr();
+        else {
+            return this.addr.getTCPAddr().getKey() + ":" + this.addr.getTCPAddr().getValue();
+        }
     }
 
     public String getDriver() {

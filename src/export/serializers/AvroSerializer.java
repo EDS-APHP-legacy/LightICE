@@ -19,7 +19,7 @@ public class AvroSerializer extends Serializer {
 
     @Override
     public List<byte[]> serializeToBytes(DeviceIdentity di, Data data) {
-        DeviceInfo deviceInfo = new DeviceInfo(di.getSite(), di.getService(), di.getSector(), di.getRoom(), di.getAlias(), di.getSerialPort(), di.getDriver());
+        DeviceInfo deviceInfo = new DeviceInfo(di.getSite(), di.getService(), di.getSector(), di.getRoom(), di.getAlias(), di.getAddr().getSerialAddr(), di.getDriver());
 
         List<byte[]> result = new ArrayList<>();
 
