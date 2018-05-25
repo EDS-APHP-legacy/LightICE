@@ -33,10 +33,15 @@ Have fun!
 ls build/libs/
 ```
 
+Exemples are available here:
+
+* [Kotlin to zeromq](https://github.com/jaj42/IntelliPhynet)
+
+
 ## Development
 
 This project accepts Pull/Requests and we will be happy to answer your issues with LightICE.
-To add a new monitor in the list of supported monitors, we need a monitor to test it, this also implies time, if you need a monitor that is not currently supported, don't hesitate to participate in this project.  
+To add a new monitor in the list of supported monitors, we need a monitor to test it, this also implies time, if you need a monitor that is not currently supported, don't hesitate to participate in this project.
 
 ## Licence
 
