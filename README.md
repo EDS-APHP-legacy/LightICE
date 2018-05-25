@@ -35,7 +35,7 @@ ls build/libs/
 
 Exemples are available here:
 
-* [Kotlin to zeromq](https://github.com/jaj42/IntelliPhynet)
+* [LightICE to zeromq (Kotlin)](https://github.com/jaj42/IntelliPhynet)
 
 
 ## Development
