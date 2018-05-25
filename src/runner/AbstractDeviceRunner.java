@@ -299,7 +299,7 @@ public abstract class AbstractDeviceRunner {
     protected void unregisterNumericInstance(InstanceHolder<Numeric> holder) {
         if (null != holder) {
             registeredNumericInstances.remove(holder);
-            log.debug("numericDataWriter.unregister_instance(holder.data, holder.handlerPeriod);");
+            log.warn("numericDataWriter.unregister_instance(holder.data, holder.handlerPeriod);");
             //numericDataWriter.unregister_instance(holder.data, holder.handlerPeriod);
         }
     }
@@ -342,17 +342,17 @@ public abstract class AbstractDeviceRunner {
             unregisterNumericInstance(holder);
             holder = null;
         }
-        if (null != newValue) {
+//        if (null != newValue) {
             if (null == holder) {
                 holder = createNumericInstance(rosettaMetric, vendor_rosettaMetric, instance_id, rosettaUnit);
             }
-            numericSample(holder.data, newValue, deviceTime, referenceTime);
-        } else {
-            if (null != holder) {
-                unregisterNumericInstance(holder);
-                holder = null;
-            }
-        }
+            numericSample(holder.data, newValue == null ? Float.NaN : newValue, deviceTime, referenceTime);
+//        } else {
+//            if (null != holder) {
+//                unregisterNumericInstance(holder);
+//                holder = null;
+//            }
+//        }
         return holder;
     }
     private void fill(SampleArray sampleArray, NullSaveContainer<Number> newValues) {

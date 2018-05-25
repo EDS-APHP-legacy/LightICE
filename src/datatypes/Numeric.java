@@ -3,6 +3,8 @@ package datatypes;
 import common.DeviceIdentity;
 import ice.CdrHelper;
 
+import java.util.Objects;
+
 
 public class Numeric extends RosettaTimeAwareData
 {
@@ -13,7 +15,7 @@ public class Numeric extends RosettaTimeAwareData
     // TODO: get/set for vendorMetric
     private String vendorMetric = ""; /* maximum length = (64) */
     public int instanceId = 0;
-    public float value = 0;
+    public Float value = 0f;
 
     public Numeric() {
     }
@@ -65,7 +67,7 @@ public class Numeric extends RosettaTimeAwareData
             return false;
         }
 
-        if(value != otherObj.value) {
+        if(!Objects.equals(value, otherObj.value)) {
             return false;
         }
 
@@ -89,28 +91,28 @@ public class Numeric extends RosettaTimeAwareData
         return this.presentationTime.timestampNano();
     }
 
-
-    public int hashCode() {
-        int __result = 0;
-
-        __result += deviceIdentity.getUniqueDeviceIdentifier().hashCode();
-
-        __result += rosettaMetric.hashCode();
-
-        __result += vendorMetric.hashCode();
-
-        __result += (int) instanceId;
-
-        __result += rosettaUnit.hashCode();
-
-        __result += (int)value;
-
-        __result += deviceTime.hashCode();
-
-        __result += presentationTime.hashCode();
-
-        return __result;
-    }
+//
+//    public int hashCode() {
+//        int __result = 0;
+//
+//        __result += deviceIdentity.getUniqueDeviceIdentifier().hashCode();
+//
+//        __result += rosettaMetric.hashCode();
+//
+//        __result += vendorMetric.hashCode();
+//
+//        __result += (int) instanceId;
+//
+//        __result += rosettaUnit.hashCode();
+//
+//        __result += (int)value;
+//
+//        __result += deviceTime.hashCode();
+//
+//        __result += presentationTime.hashCode();
+//
+//        return __result;
+//    }
 
 
     /**
