@@ -341,51 +341,53 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                 IceInstant fakeSampleTime = IceInstant.now(); // new DomainClock().instant();
 
                 // For k, v in sampleArrayCache...
-                for(Map.Entry<ObservedValue, Map<Integer, SampleCache>> entry : sampleArrayCache.entrySet()){
-                    ObservedValue observedValue = entry.getKey();
-                    Map<Integer, SampleCache> sampleCacheByHandle = entry.getValue();
+                synchronized (sampleArrayCache) {
+                    for (Map.Entry<ObservedValue, Map<Integer, SampleCache>> entry : sampleArrayCache.entrySet()) {
+                        ObservedValue observedValue = entry.getKey();
+                        Map<Integer, SampleCache> sampleCacheByHandle = entry.getValue();
 
-                    // For kk, vv in sampleCacheByHandle...
-                    for (Map.Entry<Integer, SampleCache> subentry : sampleCacheByHandle.entrySet()) {
-                        Integer handleId = subentry.getKey();
-                        SampleCache sampleCache = subentry.getValue();
+                        // For kk, vv in sampleCacheByHandle...
+                        for (Map.Entry<Integer, SampleCache> subentry : sampleCacheByHandle.entrySet()) {
+                            Integer handleId = subentry.getKey();
+                            SampleCache sampleCache = subentry.getValue();
 
-                        InstanceHolder<SampleArray> holder = getSampleArrayUpdate(observedValue, handleId);
+                            InstanceHolder<SampleArray> holder = getSampleArrayUpdate(observedValue, handleId);
 
-                        // Get the time period over which values are sampled for this handle
-                        RelativeTime rt = handleToUpdatePeriod.get(handleId);
+                            // Get the time period over which values are sampled for this handle
+                            RelativeTime rt = handleToUpdatePeriod.get(handleId);
 
-                        if (null == rt || null == sampleCache) {
-                            log.warn("No RelativeTime for handle=" + handleId + " rt=" + rt + " sampleCache=" + sampleCache + " unitCode="+unitCode);
-                            continue;
-                        }
+                            if (null == rt || null == sampleCache) {
+                                log.warn("No RelativeTime for handle=" + handleId + " rt=" + rt + " sampleCache=" + sampleCache + " unitCode=" + unitCode);
+                                continue;
+                            }
 //                        int samples = (int) (PERIOD / rt.toMilliseconds());
 
-                        if(null != holder) {
-                            synchronized(sampleCache) {
-                                System.out.println("Getting samples from sampleCache... (holder not null)");
-                                Pair<IceInstant, List<Number>> c = sampleCache.emitSamples(holder.data.getRosettaMetric() + " " + holder.data.instanceId);
-                                if(null == c) {
-                                    putSampleArrayUpdate(observedValue, handleId, null);
-                                } else {
-                                    sampleArraySample(holder.data, c.getValue(), c.getKey(), fakeSampleTime);
+                            if (null != holder) {
+                                synchronized (sampleCache) {
+                                    log.debug("Getting samples from sampleCache... (holder not null)");
+                                    Pair<IceInstant, List<Number>> c = sampleCache.emitSamples(holder.data.getRosettaMetric() + " " + holder.data.instanceId);
+                                    if (null == c) {
+                                        putSampleArrayUpdate(observedValue, handleId, null);
+                                    } else {
+                                        sampleArraySample(holder.data, c.getValue(), c.getKey(), fakeSampleTime);
+                                    }
                                 }
-                            }
-                        } else {
-                            String rosettaMetric = sampleArrayRosettaMetrics.get(observedValue);
-                            if (rosettaMetric == null) {
-                                rosettaMetric = "";
-                                log.warn("Unknown waveform:" + observedValue);
-                            }
-                            UnitCode unitCode = handleToUnitCode.get(handleId);
-                            synchronized(sampleCache) {
-                                System.out.println("Getting samples from sampleCache... (holder not null)");
-                                putSampleArrayUpdate(
-                                        observedValue, handleId,
-                                        sampleArraySample(getSampleArrayUpdate(observedValue, handleId), sampleCache.emitSamples(rosettaMetric+" "+handleId),
-                                                rosettaMetric, observedValue.toString(), handleId,
-                                                PhilipsToRosettaMapping.units(unitCode),
-                                                (int)(1000L / rt.toMilliseconds()), fakeSampleTime));
+                            } else {
+                                String rosettaMetric = sampleArrayRosettaMetrics.get(observedValue);
+                                if (rosettaMetric == null) {
+                                    rosettaMetric = "";
+                                    log.warn("Unknown waveform:" + observedValue);
+                                }
+                                UnitCode unitCode = handleToUnitCode.get(handleId);
+                                synchronized (sampleCache) {
+                                    System.out.println("Getting samples from sampleCache... (holder not null)");
+                                    putSampleArrayUpdate(
+                                            observedValue, handleId,
+                                            sampleArraySample(getSampleArrayUpdate(observedValue, handleId), sampleCache.emitSamples(rosettaMetric + " " + handleId),
+                                                    rosettaMetric, observedValue.toString(), handleId,
+                                                    PhilipsToRosettaMapping.units(unitCode),
+                                                    (int) (1000L / rt.toMilliseconds()), fakeSampleTime));
+                                }
                             }
                         }
                     }
@@ -731,6 +733,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
             if (intellivueRelativeClock == null) {
                 log.error("intellivueRelativeClock not initialized with setDeviceStartTime!");
+                return;
             }
             IceInstant deviceTime = intellivueRelativeClock.instantFromRelative(result.getRelativeTime());
             IceInstant referenceTime = this.referenceClock.instant();
