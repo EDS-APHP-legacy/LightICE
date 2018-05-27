@@ -1,5 +1,6 @@
 package utils;
 
+import ch.qos.logback.classic.Level;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -9,23 +10,35 @@ import export.serializers.Serializer;
 import export.writers.KafkaWriter;
 import export.writers.StdoutWriter;
 import export.writers.Writer;
+import org.apache.commons.compress.archivers.dump.UnrecognizedFormatException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
 public class Conf {
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
+    private Level logLevel;
     private List<Device> devices;
     private List<Writer> writers;
 
     public Conf() {
         this.devices = new ArrayList<>();
         this.writers = new ArrayList<>();
+        this.logLevel = Level.INFO;
+    }
+
+    public void setLogLevel(Level logLevel) {
+        this.logLevel = logLevel;
     }
 
     public void addDevice(Device device) {
@@ -52,7 +65,33 @@ public class Conf {
     public static Conf parseConfig(String configurationPath) throws IOException, ClassNotFoundException {
         Conf conf = new Conf();
 
-        for (JsonValue value : Json.parse(readFileToString(configurationPath)).asObject().get("writers").asArray()) {
+        JsonObject confObj = Json.parse(readFileToString(configurationPath)).asObject();
+
+        switch (confObj.get("log_level").asString().toUpperCase()) {
+            case "TRACE":
+                conf.setLogLevel(Level.TRACE);
+                break;
+            case "DEBUG":
+                conf.setLogLevel(Level.DEBUG);
+                break;
+            case "INFO":
+                conf.setLogLevel(Level.INFO);
+                break;
+            case "WARN":
+                conf.setLogLevel(Level.WARN);
+                break;
+            case "ERROR":
+                conf.setLogLevel(Level.ERROR);
+                break;
+            case "OFF":
+                conf.setLogLevel(Level.OFF);
+                break;
+            default:
+                throw new UnexpectedException("log_level variable should be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF");
+
+        }
+
+        for (JsonValue value : confObj.get("writers").asArray()) {
             String type = value.asObject().get("type").asString();
 
             Serializer serializer = null;
@@ -99,7 +138,7 @@ public class Conf {
             conf.addWriter(writer);
         }
 
-        for (JsonValue value : Json.parse(readFileToString(configurationPath)).asObject().get("servers").asArray()) {
+        for (JsonValue value : confObj.get("servers").asArray()) {
             Device device = null;
             if (!(value.asObject().get("serialPort") == null)) {
                 device = new Device(

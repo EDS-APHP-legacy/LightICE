@@ -1,4 +1,5 @@
 {
+  "log_level": "DEBUG",
   "writers": [
     {
       "type": "kafka",
