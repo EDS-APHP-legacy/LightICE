@@ -311,9 +311,9 @@ public class SimulatedPulseOximeterImpl extends IntellivueAcceptor {
     private final Date myDate = new Date();
 
     @Override
-    protected synchronized void handler(SocketAddress sockaddr, AssociationFinish message) throws IOException {
+    protected synchronized void handleAssociationMessage(SocketAddress sockaddr, AssociationFinish message) throws IOException {
         invoke = null;
-        super.handler(sockaddr, message);
+        super.handleAssociationMessage(sockaddr, message);
     }
 
     public MyTask createMyTask() {

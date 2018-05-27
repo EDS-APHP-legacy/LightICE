@@ -111,7 +111,7 @@ public class Intellivue implements NetworkConnection {
 
     private static final int CHARS_PER_LINE = 140;
 
-    protected void handler(SocketAddress sockaddr, Message message, SelectionKey sk) throws IOException {
+    protected void handleRawMessage(SocketAddress sockaddr, Message message, SelectionKey sk) throws IOException {
         if (null == message) {
             return;
         }
@@ -120,55 +120,63 @@ public class Intellivue implements NetworkConnection {
             time.setTime(System.currentTimeMillis());
             log.trace("In Message(" + simpleDateformat.format(time) + "):\n" + lineWrap(message.toString()));
         }
+
         if (message instanceof DataExportMessage) {
-            handler((DataExportMessage) message);
+            handleDataExportMessage((DataExportMessage) message);
         } else if (message instanceof AssociationMessage) {
-            handler(sockaddr, (AssociationMessage) message);
+            handleAssociationMessage(sockaddr, (AssociationMessage) message);
         } else if (message instanceof ConnectIndication) {
             handler((ConnectIndication) message, sk);
+        } else {
+            log.warn("Message is an instance of an unknown class (" + message.getClass() + "), cannot handle it.");
         }
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationAccept message) {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAccept message) {
+        log.warn("Unimplemented handleAssociationMessage for AssociationAccept message " + message.toString());
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationFinish message) throws IOException {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationFinish message) throws IOException {
         AssociationDisconnect disconn = new AssociationDisconnectImpl();
         send(disconn);
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationRefuse message) {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationRefuse message) {
+        log.warn("Unimplemented handleAssociationMessage for AssociationRefuse message " + message.toString());
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationDisconnect message) {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationDisconnect message) {
+        log.warn("Unimplemented handleAssociationMessage for AssociationDisconnect message " + message.toString());
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationAbort message) {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAbort message) {
+        log.warn("Unimplemented handleAssociationMessage for AssociationAbort message " + message.toString());
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationConnect message) {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationConnect message) {
+        log.warn("Unimplemented handleAssociationMessage for AssociationConnect message " + message.toString());
     }
 
-    protected void handler(SocketAddress sockaddr, AssociationMessage message) throws IOException {
+    protected void handleAssociationMessage(SocketAddress sockaddr, AssociationMessage message) throws IOException {
 
         switch (message.getType()) {
         case Connect:
-            handler(sockaddr, (AssociationConnect) message);
+            handleAssociationMessage(sockaddr, (AssociationConnect) message);
             break;
         case Accept:
-            handler(sockaddr, (AssociationAccept) message);
+            handleAssociationMessage(sockaddr, (AssociationAccept) message);
             break;
         case Refuse:
-            handler(sockaddr, (AssociationRefuse) message);
+            handleAssociationMessage(sockaddr, (AssociationRefuse) message);
             break;
         case Disconnect:
-            handler(sockaddr, (AssociationDisconnect) message);
+            handleAssociationMessage(sockaddr, (AssociationDisconnect) message);
             break;
         case Abort:
-            handler(sockaddr, (AssociationAbort) message);
+            handleAssociationMessage(sockaddr, (AssociationAbort) message);
             break;
         case Finish:
-            handler(sockaddr, (AssociationFinish) message);
+            handleAssociationMessage(sockaddr, (AssociationFinish) message);
             break;
         default:
             break;
@@ -371,18 +379,22 @@ public class Intellivue implements NetworkConnection {
 
     protected void handler(SinglePollDataResult result) {
         // TODO: what is this for?
+        log.warn("Unimplemented handler for SinglePollDataResult: " + result);
     }
 
     protected void handler(ExtendedPollDataResult result) {
         // TODO: what is this for?
+        log.warn("Unimplemented handler for ExtendedPollDataResult: " + result);
     }
 
     protected void handler(SetResult result, boolean confirmed) {
         // TODO: what is this for?
+        log.warn("Unimplemented handler for SetResult: " + result);
     }
 
     protected void handler(Get get) {
         // TODO: what is this for?
+        log.warn("Unimplemented handler for Get: " + get);
     }
 
     protected void handler(Set set, boolean confirmed) throws IOException {
@@ -398,12 +410,14 @@ public class Intellivue implements NetworkConnection {
 
     protected void handler(GetResult result) {
         // TODO: what is this for?
+        log.warn("Unimplemented handler for GetResult: " + result);
     }
 
     protected void handler(ActionResult action, boolean request) {
         ObjectClass objectclass = ObjectClass.valueOf(action.getActionType().getType());
 
         if (null == objectclass) {
+            log.warn("ActionResult handler could not detect action type: " + action);
             return;
         }
         if (!request) {
@@ -435,13 +449,15 @@ public class Intellivue implements NetworkConnection {
 
     protected void handler(SinglePollDataRequest action) {
         // TODO: what is this for?
+        log.warn("Unimplemented SinglePollDataRequest for Get: " + action);
     }
 
     protected void handler(ExtendedPollDataRequest action) {
         // TODO: what is this for?
+        log.warn("Unimplemented ExtendedPollDataRequest for Get: " + action);
     }
 
-    protected void handler(DataExportResult message) {
+    protected void handleDataExportMessage(DataExportResult message) {
         switch (message.getCommandType()) {
         case ConfirmedAction:
             handler((ActionResult) message.getCommand(), false);
@@ -456,12 +472,12 @@ public class Intellivue implements NetworkConnection {
             handler((SetResult) message.getCommand(), false);
             break;
         default:
-            log.warn("Unknown CommandType=" + message.getCommandType());
+            log.warn("Unknown CommandType when receiving a DataExportResult: " + message.getCommandType());
             break;
         }
     }
 
-    protected void handler(DataExportInvoke message) throws IOException {
+    protected void handleDataExportMessage(DataExportInvoke message) throws IOException {
         switch (message.getCommandType()) {
         case ConfirmedEventReport:
             handler((EventReport) message.getCommand(), true);
@@ -482,32 +498,36 @@ public class Intellivue implements NetworkConnection {
             handler((Set) message.getCommand(), false);
             break;
         default:
-            log.warn("Unknown invoke=" + message);
+            log.warn("Unknown commandType when receiving a DataExportInvoke: " + message);
             break;
         }
     }
 
-    protected void handler(DataExportError error) throws IOException {
-
+    protected void handleDataExportMessage(DataExportError error) throws IOException {
+        log.error("Received a DataExportError: " + error.toString());
     }
 
-    protected void handler(DataExportMessage message) throws IOException {
+    protected void handleDataExportMessage(DataExportMessage message) throws IOException {
         if (null == message) {
+            // FIXME: why would it be null?
+            log.info("FIXME: why would it be null?");
             return;
         }
         switch (message.getRemoteOperation()) {
         case Invoke:
-            handler((DataExportInvoke) message);
+            handleDataExportMessage((DataExportInvoke) message);
             break;
         case Result:
+            log.warn("Unimplemented Result remoteOperation!");
+            break;
         case LinkedResult:
-            handler((DataExportResult) message);
+            handleDataExportMessage((DataExportResult) message);
             break;
         case Error:
-            handler((DataExportError) message);
+            handleDataExportMessage((DataExportError) message);
             break;
         default:
-            log.warn("Unknown remoteOperation:" + message.getRemoteOperation());
+            log.warn("Unknown remoteOperation when receiving a DataExportMessage:" + message.getRemoteOperation());
             break;
         }
 
@@ -658,7 +678,7 @@ public class Intellivue implements NetworkConnection {
                 }
 
                 // Handle the received message
-                handler(sockaddr, protocol.parse(inBuffer), sk);
+                handleRawMessage(sockaddr, protocol.parse(inBuffer), sk);
             }
         }
     }

@@ -113,8 +113,8 @@ public class IntellivueAcceptor extends Intellivue {
     }
 
     @Override
-    protected synchronized void handler(SocketAddress sockaddr, drivers.philips.intellivue.association.AssociationConnect message) {
-        super.handler(sockaddr, message);
+    protected synchronized void handleAssociationMessage(SocketAddress sockaddr, drivers.philips.intellivue.association.AssociationConnect message) {
+        super.handleAssociationMessage(sockaddr, message);
 
         AssociationAccept acc = new AssociationAcceptImpl();
         log.debug("Sending accept:" + acc);

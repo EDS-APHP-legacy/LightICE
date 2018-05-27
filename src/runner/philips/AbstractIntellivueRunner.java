@@ -82,7 +82,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
     // SampleArrays and Numerics cache
     protected final Map<ObservedValue, Map<Integer, InstanceHolder<Numeric>>> numericUpdates = new HashMap<>();
     protected final Map<ObservedValue, Map<Integer, InstanceHolder<SampleArray>>> sampleArrayUpdates = new HashMap<>();
-    protected final Map<ObservedValue, Map<Integer, SampleCache>> sampleArrayCache = Collections.synchronizedMap(new HashMap<ObservedValue, Map<Integer, SampleCache>>());
+    protected final Map<ObservedValue, Map<Integer, SampleCache>> sampleArrayCache = Collections.synchronizedMap(new HashMap<>());
 
 
     // A set containing all the SelectionKey corresponding to the networkloop (SelectionKey=channel+selector)
@@ -415,10 +415,10 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(DataExportResult message) {
+        protected void handleDataExportMessage(DataExportResult message) {
             // if we were checking for confirmation of outgoing confirmed
             // messages this would be the place to find confirmations
-            super.handler(message);
+            super.handleDataExportMessage(message);
         }
 
         @Override
@@ -428,33 +428,33 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, Message message, SelectionKey sk) throws IOException {
+        protected void handleRawMessage(SocketAddress sockaddr, Message message, SelectionKey sk) throws IOException {
             // This will capture DataExport, Association, and ConnectIndication
             // messages...
             // Opting not to update lastMessageREceived for ConnectIndications
             // .. since they are beacons and not part of the session
-            super.handler(sockaddr, message, sk);
+            super.handleRawMessage(sockaddr, message, sk);
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationMessage message) throws IOException {
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationMessage message) throws IOException {
             lastMessageReceived = System.currentTimeMillis();
-            super.handler(sockaddr, message);
+            super.handleAssociationMessage(sockaddr, message);
         }
 
         @Override
-        protected void handler(DataExportError error) throws IOException {
+        protected void handleDataExportMessage(DataExportError error) throws IOException {
             // Could do something context-sensitive here when a confirmed action
             // fails
             // Such as when setting the priority list returns "access denied"
             // for waveforms because another client is already receiving waves
-            super.handler(error);
+            super.handleDataExportMessage(error);
         }
 
         @Override
-        protected void handler(DataExportMessage message) throws IOException {
+        protected void handleDataExportMessage(DataExportMessage message) throws IOException {
             lastMessageReceived = System.currentTimeMillis();
-            super.handler(message);
+            super.handleDataExportMessage(message);
         }
 
         @Override
@@ -511,7 +511,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationRefuse message) {
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationRefuse message) {
             switch (stateMachine.getState().ordinal()) {
                 case ConnectionState._Connected:
                     state(ConnectionState.Negotiating, "reconnecting after active association is later refused");
@@ -526,11 +526,11 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     break;
             }
 
-            super.handler(sockaddr, message);
+            super.handleAssociationMessage(sockaddr, message);
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationAbort message) {
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAbort message) {
             switch (stateMachine.getState().ordinal()) {
                 case ConnectionState._Connected:
                     state(ConnectionState.Negotiating, "reconnecting after active association is later aborted");
@@ -541,11 +541,11 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     }
                     break;
             }
-            super.handler(sockaddr, message);
+            super.handleAssociationMessage(sockaddr, message);
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationDisconnect message) {
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationDisconnect message) {
             switch (stateMachine.getState().ordinal()) {
                 case ConnectionState._Connected:
                     state(ConnectionState.Negotiating, "unexpected disconnect message");
@@ -556,12 +556,12 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     }
                     break;
             }
-            super.handler(sockaddr, message);
+            super.handleAssociationMessage(sockaddr, message);
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationFinish message) throws IOException {
-            super.handler(sockaddr, message);
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationFinish message) throws IOException {
+            super.handleAssociationMessage(sockaddr, message);
             switch (stateMachine.getState().ordinal()) {
                 case ConnectionState._Connected:
                     state(ConnectionState.Negotiating, "unexpected disconnect message");
@@ -603,13 +603,13 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(SocketAddress sockaddr, AssociationAccept message) {
+        protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAccept message) {
             PollProfileSupport pps = message.getUserInfo().getPollProfileSupport();
             long timeout = minPollPeriodToTimeout(pps.getMinPollPeriod().toMilliseconds());
             OUT_CONNECTION_ASSERT = Math.max(200L, timeout - 1000L);
             log.debug("Negotiated " + pps.getMinPollPeriod().toMilliseconds() + "ms min poll period, timeout=" + timeout);
             log.debug("Negotiated " + pps.getMaxMtuTx() + " " + pps.getMaxMtuRx() + " " + pps.getMaxBwTx());
-            super.handler(sockaddr, message);
+            super.handleAssociationMessage(sockaddr, message);
         }
 
         @Override
@@ -814,20 +814,21 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
         private final void handlerNumeric(int handle, IceInstant deviceTime, IceInstant referenceTime, NumericObservedValue observed) {
             // log.debug(observed.toString());
-            ObservedValue ov = ObservedValue.valueOf(observed.getPhysioId().getType());
-            if (null != ov) {
-                String rosettaMetric = numericRosettaMetrics.get(ov);
+            ObservedValue observedValue = ObservedValue.valueOf(observed.getPhysioId().getType());
+            if (null != observedValue) {
+                String rosettaMetric = numericRosettaMetrics.get(observedValue);
+
                 // Here rosettaMetric is null if no mapping has already been done
                 if (rosettaMetric == null) {
-                    log.warn("Unknown numeric:" + observed);
+                    log.warn("Numeric metric not mapped to rosetta metric:" + observed);
                 }
 
                 UnitCode unit = UnitCode.valueOf(observed.getUnitCode().getType());
 
                 if (observed.getMsmtState().isUnavailable())
-                    putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), (Float) null, rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
+                    putNumericUpdate(observedValue, handle, numericSample(getNumericUpdate(observedValue, handle), (Float) null, rosettaMetric, observedValue.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
                 else
-                    putNumericUpdate(ov, handle, numericSample(getNumericUpdate(ov, handle), observed.getValue().floatValue(), rosettaMetric, ov.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
+                    putNumericUpdate(observedValue, handle, numericSample(getNumericUpdate(observedValue, handle), observed.getValue().floatValue(), rosettaMetric, observedValue.toString(), handle, PhilipsToRosettaMapping.units(unit), deviceTime, referenceTime));
             }
             else {
                 log.warn("Unknown Observed Value: PhysioIdType=" + observed.getPhysioId().getType() + ", observed=" + observed);

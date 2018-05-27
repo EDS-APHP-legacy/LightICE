@@ -72,7 +72,7 @@ public class CompoundProtocol implements Protocol {
         } else if (message instanceof ConnectIndication) {
             connectIndicationProtocol.format((ConnectIndication) message, bb);
         } else {
-            // TODO something to alert the user
+            log.warn("Message is an instance of an unknown class (" + message.getClass() + "), cannot format.");
         }
     }
 
