@@ -20,7 +20,7 @@ import drivers.philips.intellivue.data.OIDType;
 import drivers.philips.intellivue.data.RelativeTime;
 import drivers.philips.intellivue.dataexport.DataExportEvent;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.command.EventReport;
+import drivers.philips.intellivue.dataexport.command.EventReportInterface;
 import drivers.philips.intellivue.dataexport.command.EventReportResult;
 import drivers.philips.intellivue.dataexport.event.EventFactory;
 import drivers.philips.intellivue.util.Util;
@@ -29,7 +29,7 @@ import drivers.philips.intellivue.util.Util;
  * @author Jeff Plourde
  *
  */
-public class EventReportImpl implements EventReport {
+public class EventReport implements EventReportInterface {
     private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
     private final RelativeTime eventTime = new RelativeTime();
     private OIDType eventType;

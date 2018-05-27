@@ -22,15 +22,15 @@ import drivers.philips.intellivue.data.AttributeValueAssertion;
 import drivers.philips.intellivue.data.ManagedObjectIdentifier;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
 import drivers.philips.intellivue.dataexport.ModifyOperator;
-import drivers.philips.intellivue.dataexport.command.Set;
-import drivers.philips.intellivue.dataexport.command.SetResult;
+import drivers.philips.intellivue.dataexport.command.SetInterface;
+import drivers.philips.intellivue.dataexport.command.SetResultInterface;
 import drivers.philips.intellivue.util.Util;
 
 /**
  * @author Jeff Plourde
  *
  */
-public class SetImpl implements Set {
+public class SetArgument implements SetInterface {
 
     private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
     private long scope;
@@ -147,8 +147,8 @@ public class SetImpl implements Set {
     }
 
     @Override
-    public SetResult createResult() {
-        SetResultImpl eri = new SetResultImpl();
+    public SetResultInterface createResult() {
+        SetResult eri = new SetResult();
         eri.getManagedObject().setOidType(managedObject.getOidType());
         eri.getManagedObject().getGlobalHandleId().setMdsContext(managedObject.getGlobalHandleId().getMdsContext());
         eri.getManagedObject().getGlobalHandleId().setHandleId(managedObject.getGlobalHandleId().getHandleId());

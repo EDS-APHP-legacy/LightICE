@@ -14,9 +14,23 @@ package drivers.philips.intellivue.dataexport.command;
 
 import java.util.List;
 
-import drivers.philips.intellivue.data.OIDType;
+import drivers.philips.intellivue.Formatable;
+import drivers.philips.intellivue.Parseable;
+import drivers.philips.intellivue.attribute.Attribute;
 import drivers.philips.intellivue.dataexport.DataExportCommand;
+import drivers.philips.intellivue.dataexport.ModifyOperator;
 
-public interface Get extends DataExportCommand {
-    List<OIDType> getAttributeId();
+public interface SetInterface extends DataExportCommand {
+    interface AttributeModEntry extends Parseable, Formatable {
+        ModifyOperator getModifyOperator();
+
+        Attribute<?> getAttributeValueAssertion();
+    }
+
+    List<AttributeModEntry> getList();
+
+    // void add(ModifyOperator modifyOperator, AttributeValueAssertion ava);
+    void add(ModifyOperator modifyOperator, Attribute<?> attribute);
+
+    SetResultInterface createResult();
 }

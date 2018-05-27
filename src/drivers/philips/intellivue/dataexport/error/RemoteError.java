@@ -20,9 +20,17 @@ import drivers.philips.intellivue.OrdinalEnum;
  * @author Jeff Plourde
  *
  */
-public enum RemoteError implements OrdinalEnum.IntType {
-    NoSuchObjectClass(0), NoSuchObjectInstance(1), AccessDenied(2), GetListError(7), SetListError(8), NoSuchAction(9), ProcessingFailure(10), InvalidArgumentValue(
-            15), InvalidScope(16), InvalidObjectInstance(17);
+public enum     RemoteError implements OrdinalEnum.IntType {
+    NoSuchObjectClass(0),
+    NoSuchObjectInstance(1),
+    AccessDenied(2),
+    GetListError(7),
+    SetListError(8),
+    NoSuchAction(9),
+    ProcessingFailure(10),
+    InvalidArgumentValue(15),
+    InvalidScope(16),
+    InvalidObjectInstance(17);
 
     private final int x;
 
@@ -40,4 +48,29 @@ public enum RemoteError implements OrdinalEnum.IntType {
         return x;
     }
 
+    public final String toString() {
+        switch (this) {
+            case NoSuchObjectClass:
+                return "There is no such object class in the system. An OIDType with the class ID is appended to the message.";
+            case NoSuchObjectInstance:
+                return"The object instance does not exist. The ManagedObjectId of the instance is appended.";
+            case AccessDenied:
+                return"Computer Client has not required privileges to perform the operation. No data is appended.";
+            case GetListError:
+                return"Get operation failed. A GetListError is appended to the message.";
+            case SetListError:
+                return"Set operation failed. A SetListError is appended to the message.";
+            case NoSuchAction:
+                return"Unknown action type. The object class ID and action type are appended to the message.";
+            case ProcessingFailure:
+                return"Generic error indicating an invalid request. A ProcessingFailure is appended to the message.";
+            case InvalidArgumentValue:
+                return"The argument of the ROSE message was not valid. An Action result is appended.";
+            case InvalidScope:
+                return"The scope is not valid for the operation. The value of the scope is appended.";
+            case InvalidObjectInstance:
+                return"Wrong object instance. The ManagedObjectId of the instance is appended.";
+        }
+        return "";
+    }
 }

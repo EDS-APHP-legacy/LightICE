@@ -16,12 +16,12 @@ import java.nio.ByteBuffer;
 
 import drivers.philips.intellivue.Formatable;
 import drivers.philips.intellivue.Parseable;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 
 public interface DataExportAction extends Parseable, Formatable {
     void parseMore(ByteBuffer bb);
 
-    ActionResult getAction();
+    ActionResultInterface getAction();
 
-    void setAction(ActionResult action);
+    void setAction(ActionResultInterface action);
 }

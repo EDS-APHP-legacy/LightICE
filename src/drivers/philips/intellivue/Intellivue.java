@@ -61,18 +61,12 @@ import drivers.philips.intellivue.dataexport.CommandType;
 import drivers.philips.intellivue.dataexport.DataExportError;
 import drivers.philips.intellivue.dataexport.DataExportInvoke;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.DataExportResult;
+import drivers.philips.intellivue.dataexport.DataExportResultInterface;
 import drivers.philips.intellivue.dataexport.ModifyOperator;
-import drivers.philips.intellivue.dataexport.command.Action;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
-import drivers.philips.intellivue.dataexport.command.CommandFactory;
-import drivers.philips.intellivue.dataexport.command.EventReport;
-import drivers.philips.intellivue.dataexport.command.Get;
-import drivers.philips.intellivue.dataexport.command.GetResult;
-import drivers.philips.intellivue.dataexport.command.Set;
-import drivers.philips.intellivue.dataexport.command.SetResult;
+import drivers.philips.intellivue.dataexport.command.*;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 import drivers.philips.intellivue.dataexport.impl.DataExportInvokeImpl;
-import drivers.philips.intellivue.dataexport.impl.DataExportResultImpl;
+import drivers.philips.intellivue.dataexport.impl.DataExportResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -242,10 +236,10 @@ public class Intellivue implements NetworkConnection {
     public int requestSinglePoll(ObjectClass objectType, AttributeId attrGroup) throws IOException {
         int invoke = nextInvoke();
         DataExportInvoke message = new DataExportInvokeImpl();
-        message.setCommandType(CommandType.ConfirmedAction);
+        message.setCommandType(CommandType.CMD_CONFIRMED_ACTION);
         message.setInvoke(invoke);
 
-        Action action = (Action) CommandFactory.buildCommand(CommandType.ConfirmedAction, false);
+        Action action = (Action) CommandFactory.buildCommand(CommandType.CMD_CONFIRMED_ACTION, false);
         action.getManagedObject().setOidType(OIDType.lookup(ObjectClass.NOM_MOC_VMS_MDS.asInt()));
         action.getManagedObject().getGlobalHandleId().setMdsContext(0);
         action.getManagedObject().getGlobalHandleId().setHandleId(0);
@@ -275,10 +269,10 @@ public class Intellivue implements NetworkConnection {
 
         int invoke = nextInvoke();
         DataExportInvoke message = new DataExportInvokeImpl();
-        message.setCommandType(CommandType.ConfirmedAction);
+        message.setCommandType(CommandType.CMD_CONFIRMED_ACTION);
         message.setInvoke(invoke);
 
-        Action action = (Action) CommandFactory.buildCommand(CommandType.ConfirmedAction, false);
+        Action action = (Action) CommandFactory.buildCommand(CommandType.CMD_CONFIRMED_ACTION, false);
         action.getManagedObject().setOidType(OIDType.lookup(ObjectClass.NOM_MOC_VMS_MDS.asInt()));
         action.getManagedObject().getGlobalHandleId().setMdsContext(0);
         action.getManagedObject().getGlobalHandleId().setHandleId(0);
@@ -319,10 +313,10 @@ public class Intellivue implements NetworkConnection {
         int invoke = nextInvoke();
 
         DataExportInvoke message = new DataExportInvokeImpl();
-        message.setCommandType(CommandType.Get);
+        message.setCommandType(CommandType.CMD_GET);
         message.setInvoke(invoke);
 
-        Get get = (Get) CommandFactory.buildCommand(CommandType.Get, false);
+        GetInterface get = (GetInterface) CommandFactory.buildCommand(CommandType.CMD_GET, false);
         get.getManagedObject().setOidType(OIDType.lookup(ObjectClass.NOM_MOC_VMS_MDS.asInt()));
         get.getManagedObject().getGlobalHandleId().setMdsContext(0);
         get.getManagedObject().getGlobalHandleId().setHandleId(0);
@@ -335,9 +329,9 @@ public class Intellivue implements NetworkConnection {
     public int requestSet(Label[] numerics, Label[] realtimeSampleArrays) throws IOException {
         int invoke;
         DataExportInvoke message = new DataExportInvokeImpl();
-        message.setCommandType(CommandType.ConfirmedSet);
+        message.setCommandType(CommandType.CMD_CONFIRMED_SET);
         message.setInvoke(invoke = nextInvoke());
-        Set set = (Set) CommandFactory.buildCommand(CommandType.ConfirmedSet, false);
+        SetInterface set = (SetInterface) CommandFactory.buildCommand(CommandType.CMD_CONFIRMED_SET, false);
         set.getManagedObject().setOidType(ObjectClass.NOM_MOC_VMS_MDS);
         set.getManagedObject().getGlobalHandleId().setMdsContext(0);
         set.getManagedObject().getGlobalHandleId().setHandleId(0);
@@ -364,12 +358,12 @@ public class Intellivue implements NetworkConnection {
         return invoke;
     }
 
-    protected void handler(EventReport eventReport, boolean confirm) throws IOException {
+    protected void handler(EventReportInterface eventReport, boolean confirm) throws IOException {
         if (confirm) {
             {
-                DataExportResult message = new DataExportResultImpl();
+                DataExportResultInterface message = new DataExportResult();
 
-                message.setCommandType(CommandType.ConfirmedEventReport);
+                message.setCommandType(CommandType.CMD_CONFIRMED_EVENT_REPORT);
                 message.setInvoke(eventReport.getMessage().getInvoke());
                 message.setCommand(eventReport.createConfirm());
                 send(message);
@@ -387,20 +381,20 @@ public class Intellivue implements NetworkConnection {
         log.warn("Unimplemented handler for ExtendedPollDataResult: " + result);
     }
 
-    protected void handler(SetResult result, boolean confirmed) {
+    protected void handler(SetResultInterface result, boolean confirmed) {
         // TODO: what is this for?
         log.warn("Unimplemented handler for SetResult: " + result);
     }
 
-    protected void handler(Get get) {
+    protected void handler(GetInterface get) {
         // TODO: what is this for?
-        log.warn("Unimplemented handler for Get: " + get);
+        log.warn("Unimplemented handler for CMD_GET: " + get);
     }
 
-    protected void handler(Set set, boolean confirmed) throws IOException {
+    protected void handler(SetInterface set, boolean confirmed) throws IOException {
         if (confirmed) {
-            DataExportResult message = new DataExportResultImpl();
-            message.setCommandType(CommandType.ConfirmedSet);
+            DataExportResultInterface message = new DataExportResult();
+            message.setCommandType(CommandType.CMD_CONFIRMED_SET);
             message.setInvoke(set.getMessage().getInvoke());
             message.setCommand(set.createResult());
             send(message);
@@ -408,12 +402,12 @@ public class Intellivue implements NetworkConnection {
 
     }
 
-    protected void handler(GetResult result) {
+    protected void handler(GetResultInterface result) {
         // TODO: what is this for?
         log.warn("Unimplemented handler for GetResult: " + result);
     }
 
-    protected void handler(ActionResult action, boolean request) {
+    protected void handleActionResult(ActionResultInterface action, boolean request) {
         ObjectClass objectclass = ObjectClass.valueOf(action.getActionType().getType());
 
         if (null == objectclass) {
@@ -421,6 +415,7 @@ public class Intellivue implements NetworkConnection {
             return;
         }
         if (!request) {
+            //  Poll Result messages are messages sent from the monitor to the Computer Client
             switch (objectclass) {
             case NOM_ACT_POLL_MDIB_DATA:
                 handler((SinglePollDataResult) action.getAction());
@@ -433,6 +428,7 @@ public class Intellivue implements NetworkConnection {
                 break;
             }
         } else {
+            //  Poll Request messages are messages sent from the Computer Client to the monitor
             switch (objectclass) {
             case NOM_ACT_POLL_MDIB_DATA:
                 handler((SinglePollDataRequest) action.getAction());
@@ -449,27 +445,27 @@ public class Intellivue implements NetworkConnection {
 
     protected void handler(SinglePollDataRequest action) {
         // TODO: what is this for?
-        log.warn("Unimplemented SinglePollDataRequest for Get: " + action);
+        log.warn("Unimplemented SinglePollDataRequest for CMD_GET: " + action);
     }
 
     protected void handler(ExtendedPollDataRequest action) {
         // TODO: what is this for?
-        log.warn("Unimplemented ExtendedPollDataRequest for Get: " + action);
+        log.warn("Unimplemented ExtendedPollDataRequest for CMD_GET: " + action);
     }
 
-    protected void handleDataExportMessage(DataExportResult message) {
+    protected void handleDataExportMessage(DataExportResultInterface message) {
         switch (message.getCommandType()) {
-        case ConfirmedAction:
-            handler((ActionResult) message.getCommand(), false);
+        case CMD_CONFIRMED_ACTION:
+            handleActionResult((ActionResultInterface) message.getCommand(), false);
             break;
-        case Get:
-            handler((GetResult) message.getCommand());
+        case CMD_GET:
+            handler((GetResultInterface) message.getCommand());
             break;
-        case ConfirmedSet:
-            handler((SetResult) message.getCommand(), true);
+        case CMD_CONFIRMED_SET:
+            handler((SetResultInterface) message.getCommand(), true);
             break;
-        case Set:
-            handler((SetResult) message.getCommand(), false);
+        case CMD_SET:
+            handler((SetResultInterface) message.getCommand(), false);
             break;
         default:
             log.warn("Unknown CommandType when receiving a DataExportResult: " + message.getCommandType());
@@ -479,23 +475,27 @@ public class Intellivue implements NetworkConnection {
 
     protected void handleDataExportMessage(DataExportInvoke message) throws IOException {
         switch (message.getCommandType()) {
-        case ConfirmedEventReport:
-            handler((EventReport) message.getCommand(), true);
+        case CMD_CONFIRMED_EVENT_REPORT:
+            handler((EventReportInterface) message.getCommand(), true);
             break;
-        case EventReport:
-            handler((EventReport) message.getCommand(), false);
+        case CMD_EVENT_REPORT:
+            // The Event Report command (CMD_EVENT_REPORT) is used for unsolicited messages from the
+            // sending device to the receiving device. It is appended to the Remote Operation Invoke message. In the
+            // Protocol the Event Report may require a response from the receiver (if a response is required, the
+            // CMD_CONFIRMED_EVENT_REPORT Command identifier is used).
+            handler((EventReportInterface) message.getCommand(), false);
             break;
-        case ConfirmedAction:
-            handler((Action) message.getCommand(), true);
+        case CMD_CONFIRMED_ACTION:
+            handleActionResult((Action) message.getCommand(), true);
             break;
-        case ConfirmedSet:
-            handler((Set) message.getCommand(), true);
+        case CMD_CONFIRMED_SET:
+            handler((SetInterface) message.getCommand(), true);
             break;
-        case Get:
-            handler((Get) message.getCommand());
+        case CMD_GET:
+            handler((GetInterface) message.getCommand());
             break;
-        case Set:
-            handler((Set) message.getCommand(), false);
+        case CMD_SET:
+            handler((SetInterface) message.getCommand(), false);
             break;
         default:
             log.warn("Unknown commandType when receiving a DataExportInvoke: " + message);
@@ -504,7 +504,7 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handleDataExportMessage(DataExportError error) throws IOException {
-        log.error("Received a DataExportError: " + error.toString());
+        log.error("Received a DataExportError: " + error.getError().toString());
     }
 
     protected void handleDataExportMessage(DataExportMessage message) throws IOException {
@@ -518,12 +518,17 @@ public class Intellivue implements NetworkConnection {
             handleDataExportMessage((DataExportInvoke) message);
             break;
         case Result:
+            // A Remote Operation Result message is a response to an Operation Invoke message requiring
+            // confirmation.
             log.warn("Unimplemented Result remoteOperation!");
             break;
         case LinkedResult:
-            handleDataExportMessage((DataExportResult) message);
+            // In some cases, the total data that must be returned as a result of a command may exceed the maximum
+            // message size. In these cases, multiple Remote Operation Linked Result messages are used.
+            handleDataExportMessage((DataExportResultInterface) message);
             break;
         case Error:
+            // If an error is detected at the Remote Operation level, an error message is returned
             handleDataExportMessage((DataExportError) message);
             break;
         default:

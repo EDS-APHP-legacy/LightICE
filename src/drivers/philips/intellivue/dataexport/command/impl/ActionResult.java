@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2014, MD PnP Program
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
 package drivers.philips.intellivue.dataexport.command.impl;
 
 import java.nio.ByteBuffer;
@@ -21,23 +9,23 @@ import drivers.philips.intellivue.data.OIDType;
 import drivers.philips.intellivue.data.ObjectClass;
 import drivers.philips.intellivue.dataexport.DataExportAction;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 import drivers.philips.intellivue.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Jeff Plourde
- *
- */
-public class ActionResultImpl implements ActionResult {
+public class ActionResult implements ActionResultInterface {
+    // The Action Result command is used as a response message to the Action message. It is appended to the
+    // Operation Result message or an Operation Linked Result message (if the size of the returned data
+    // exceeds a maximum message size). The command_type is set to CMD_CONFIRMED_ACTION.
+
     protected final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
     protected OIDType actionType;
 
     protected DataExportMessage message;
     protected DataExportAction action;
 
-    private static final Logger log = LoggerFactory.getLogger(ActionResultImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ActionResult.class);
 
     @Override
     public void parse(ByteBuffer bb) {

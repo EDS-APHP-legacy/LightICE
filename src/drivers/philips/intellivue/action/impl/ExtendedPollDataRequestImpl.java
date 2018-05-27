@@ -19,7 +19,7 @@ import drivers.philips.intellivue.action.ExtendedPollDataRequest;
 import drivers.philips.intellivue.data.AttributeValueList;
 import drivers.philips.intellivue.data.OIDType;
 import drivers.philips.intellivue.data.Type;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 
 /**
  * @author Jeff Plourde
@@ -31,15 +31,15 @@ public class ExtendedPollDataRequestImpl implements ExtendedPollDataRequest {
     private OIDType polledAttributeGroup = OIDType.lookup(0);
     private final AttributeValueList pollExtAttr = new AttributeValueList();
 
-    private ActionResult action;
+    private ActionResultInterface action;
 
     @Override
-    public ActionResult getAction() {
+    public ActionResultInterface getAction() {
         return this.action;
     }
 
     @Override
-    public void setAction(ActionResult action) {
+    public void setAction(ActionResultInterface action) {
         this.action = action;
     }
 

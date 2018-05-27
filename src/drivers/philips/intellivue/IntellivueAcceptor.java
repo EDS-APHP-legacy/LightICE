@@ -42,9 +42,9 @@ import drivers.philips.intellivue.data.ProtocolSupport.ProtocolSupportEntry.Tran
 import drivers.philips.intellivue.data.SystemModel;
 import drivers.philips.intellivue.dataexport.CommandType;
 import drivers.philips.intellivue.dataexport.DataExportInvoke;
-import drivers.philips.intellivue.dataexport.command.EventReport;
-import drivers.philips.intellivue.dataexport.command.Set;
-import drivers.philips.intellivue.dataexport.command.impl.EventReportImpl;
+import drivers.philips.intellivue.dataexport.command.EventReportInterface;
+import drivers.philips.intellivue.dataexport.command.SetInterface;
+import drivers.philips.intellivue.dataexport.command.impl.EventReport;
 import drivers.philips.intellivue.dataexport.event.impl.MdsCreateEventImpl;
 import drivers.philips.intellivue.dataexport.impl.DataExportInvokeImpl;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class IntellivueAcceptor extends Intellivue {
     };
 
     @Override
-    protected void handler(Set set, boolean confirmed) throws IOException {
+    protected void handler(SetInterface set, boolean confirmed) throws IOException {
         super.handler(set, confirmed);
         if (confirmed) {
         }
@@ -147,12 +147,12 @@ public class IntellivueAcceptor extends Intellivue {
         m.getAttributes().add(as);
         m.getAttributes().add(ps);
 
-        EventReport er = new EventReportImpl();
+        EventReportInterface er = new EventReport();
         er.setEvent(m);
         er.setEventType(OIDType.lookup(ObjectClass.NOM_NOTI_MDS_CREAT.asInt()));
 
         DataExportInvoke der = new DataExportInvokeImpl();
-        der.setCommandType(CommandType.EventReport);
+        der.setCommandType(CommandType.CMD_EVENT_REPORT);
         der.setCommand(er);
 
         try {

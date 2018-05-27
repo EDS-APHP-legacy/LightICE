@@ -12,17 +12,11 @@
  ******************************************************************************/
 package drivers.philips.intellivue.dataexport.command;
 
+import java.util.List;
+
 import drivers.philips.intellivue.data.OIDType;
-import drivers.philips.intellivue.dataexport.DataExportAction;
 import drivers.philips.intellivue.dataexport.DataExportCommand;
 
-public interface ActionResult extends DataExportCommand {
-
-    OIDType getActionType();
-
-    void setActionType(OIDType type);
-
-    DataExportAction getAction();
-
-    void setAction(DataExportAction action);
+public interface GetInterface extends DataExportCommand {
+    List<OIDType> getAttributeId();
 }

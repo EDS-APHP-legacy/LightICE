@@ -15,6 +15,6 @@ package drivers.philips.intellivue.dataexport.command;
 import drivers.philips.intellivue.data.AttributeValueList;
 import drivers.philips.intellivue.dataexport.DataExportCommand;
 
-public interface SetResult extends DataExportCommand {
+public interface SetResultInterface extends DataExportCommand {
     AttributeValueList getAttributes();
 }

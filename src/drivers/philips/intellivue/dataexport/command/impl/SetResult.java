@@ -14,74 +14,62 @@ package drivers.philips.intellivue.dataexport.command.impl;
 
 import java.nio.ByteBuffer;
 
-import common.io.util.Bits;
-import drivers.philips.intellivue.action.ActionFactory;
-import drivers.philips.intellivue.data.OIDType;
-import drivers.philips.intellivue.dataexport.DataExportAction;
-import drivers.philips.intellivue.dataexport.command.Action;
-import drivers.philips.intellivue.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import drivers.philips.intellivue.data.AttributeValueList;
+import drivers.philips.intellivue.data.ManagedObjectIdentifier;
+import drivers.philips.intellivue.dataexport.DataExportMessage;
+import drivers.philips.intellivue.dataexport.command.SetResultInterface;
 
 /**
  * @author Jeff Plourde
  *
  */
-public class ActionImpl extends ActionResultImpl implements Action {
-    private long scope;
+public class SetResult implements SetResultInterface {
 
-    private static final Logger log = LoggerFactory.getLogger(ActionImpl.class);
+    private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
+    private final AttributeValueList avl = new AttributeValueList();
+
+    private DataExportMessage message;
+
+    @Override
+    public void parseMore(ByteBuffer bb) {
+        managedObject.parse(bb);
+        avl.parseMore(bb);
+    }
+
+    @Override
+    public void setMessage(DataExportMessage message) {
+        this.message = message;
+    }
+
+    @Override
+    public DataExportMessage getMessage() {
+        return message;
+    }
 
     @Override
     public void parse(ByteBuffer bb) {
         managedObject.parse(bb);
-        scope = Bits.getUnsignedInt(bb);
-        actionType = OIDType.parse(bb);
-        int length = Bits.getUnsignedShort(bb);
-        action = ActionFactory.buildAction(actionType, true);
-        if (null == action) {
-            log.warn("Unknown action type:" + actionType);
-
-            bb.position(bb.position() + length);
-        } else {
-            action.setAction(this);
-            action.parse(bb);
-        }
+        avl.parse(bb);
     }
 
     @Override
     public void format(ByteBuffer bb) {
         managedObject.format(bb);
-        Bits.putUnsignedInt(bb, scope);
-        actionType.format(bb);
-
-        Util.PrefixLengthShort.write(bb, action);
-
+        avl.format(bb);
     }
 
     @Override
-    public long getScope() {
-        return scope;
+    public ManagedObjectIdentifier getManagedObject() {
+        return managedObject;
     }
 
     @Override
-    public void setScope(long x) {
-        this.scope = x;
+    public AttributeValueList getAttributes() {
+        return avl;
     }
 
     @Override
     public String toString() {
-        return "[managedObject=" + managedObject + ",scope=" + scope + ",actionType=" + actionType + ",action=" + action + "]";
+        return "[managedObject=" + managedObject + ",attrs=" + avl + "]";
     }
-
-    @Override
-    public DataExportAction getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(DataExportAction action) {
-        this.action = action;
-    }
-
 }

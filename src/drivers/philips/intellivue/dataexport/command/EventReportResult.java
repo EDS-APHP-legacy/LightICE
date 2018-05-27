@@ -12,5 +12,5 @@
  ******************************************************************************/
 package drivers.philips.intellivue.dataexport.command;
 
-public interface EventReportResult extends EventReport {
+public interface EventReportResult extends EventReportInterface {
 }

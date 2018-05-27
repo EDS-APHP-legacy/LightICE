@@ -20,9 +20,9 @@ import drivers.philips.intellivue.connectindication.ConnectIndication;
 import drivers.philips.intellivue.data.*;
 import drivers.philips.intellivue.dataexport.DataExportError;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.DataExportResult;
-import drivers.philips.intellivue.dataexport.command.EventReport;
-import drivers.philips.intellivue.dataexport.command.SetResult;
+import drivers.philips.intellivue.dataexport.DataExportResultInterface;
+import drivers.philips.intellivue.dataexport.command.EventReportInterface;
+import drivers.philips.intellivue.dataexport.command.SetResultInterface;
 import drivers.philips.intellivue.dataexport.event.MdsCreateEvent;
 import datatypes.SampleArray;
 import ice.ConnectionState;
@@ -160,7 +160,9 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     // Either side (or both) has not asserted themselves in the time
                     // required AND we haven't recently sent a keep alive message
                     try {
+                        // NOM_MOC_VMO_AL_MON == ALARMS
                         intellivue.requestSinglePoll(ObjectClass.NOM_MOC_VMO_AL_MON, AttributeId.NOM_ATTR_GRP_VMO_STATIC);
+
                         lastKeepAlive = now;
                     } catch (IOException e) {
                         state(ConnectionState.Negotiating, "failure to send a keepalive");
@@ -169,9 +171,16 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                 } else if (now - lastDataPoll >= CONTINUOUS_POLL_ASSERT) {
                     // Time to request a new data poll
                     try {
+                        // NOM_MOC_VMO_METRIC_NU == NUMERICS
                         intellivue.requestExtendedPoll(ObjectClass.NOM_MOC_VMO_METRIC_NU, CONTINUOUS_POLL_INTERVAL);
+
+                        // NOM_MOC_VMO_METRIC_SA_RT == WAVEFORMS
                         intellivue.requestExtendedPoll(ObjectClass.NOM_MOC_VMO_METRIC_SA_RT, CONTINUOUS_POLL_INTERVAL);
+
+                        // NOM_MOC_VMO_AL_MON == ALARMS
                         intellivue.requestExtendedPoll(ObjectClass.NOM_MOC_VMO_AL_MON, CONTINUOUS_POLL_INTERVAL, AttributeId.NOM_ATTR_GRP_AL_MON);
+
+                        // NOM_MOC_PT_DEMOG == PATIENT DEMOGRAPHICS
                         intellivue.requestSinglePoll(ObjectClass.NOM_MOC_PT_DEMOG, AttributeId.NOM_ATTR_GRP_PT_DEMOG);
                         lastDataPoll = now;
                     } catch (IOException e) {
@@ -415,7 +424,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handleDataExportMessage(DataExportResult message) {
+        protected void handleDataExportMessage(DataExportResultInterface message) {
             // if we were checking for confirmation of outgoing confirmed
             // messages this would be the place to find confirmations
             super.handleDataExportMessage(message);
@@ -458,7 +467,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(SetResult result, boolean confirmed) {
+        protected void handler(SetResultInterface result, boolean confirmed) {
             super.handler(result, confirmed);
             AttributeValueList attrs = result.getAttributes();
             Attribute<TextIdList> ati = attrs.getAttribute(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST, TextIdList.class);
@@ -476,7 +485,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(EventReport eventReport, boolean confirm) throws IOException {
+        protected void handler(EventReportInterface eventReport, boolean confirm) throws IOException {
             // The super sends confirmations where appropriate by default
             super.handler(eventReport, confirm);
             switch (ObjectClass.valueOf(eventReport.getEventType().getType())) {

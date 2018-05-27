@@ -10,66 +10,26 @@
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package drivers.philips.intellivue.dataexport.command.impl;
+package drivers.philips.intellivue.dataexport.command;
 
-import java.nio.ByteBuffer;
-
-import drivers.philips.intellivue.data.AttributeValueList;
 import drivers.philips.intellivue.data.ManagedObjectIdentifier;
-import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.command.SetResult;
+import drivers.philips.intellivue.data.OIDType;
+import drivers.philips.intellivue.data.RelativeTime;
+import drivers.philips.intellivue.dataexport.DataExportCommand;
+import drivers.philips.intellivue.dataexport.DataExportEvent;
 
-/**
- * @author Jeff Plourde
- *
- */
-public class SetResultImpl implements SetResult {
+public interface EventReportInterface extends DataExportCommand {
+    ManagedObjectIdentifier getManagedObject();
 
-    private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
-    private final AttributeValueList avl = new AttributeValueList();
+    OIDType getEventType();
 
-    private DataExportMessage message;
+    void setEventType(OIDType oid);
 
-    @Override
-    public void parseMore(ByteBuffer bb) {
-        managedObject.parse(bb);
-        avl.parseMore(bb);
-    }
+    EventReportResult createConfirm();
 
-    @Override
-    public void setMessage(DataExportMessage message) {
-        this.message = message;
-    }
+    DataExportEvent getEvent();
 
-    @Override
-    public DataExportMessage getMessage() {
-        return message;
-    }
+    RelativeTime getEventTime();
 
-    @Override
-    public void parse(ByteBuffer bb) {
-        managedObject.parse(bb);
-        avl.parse(bb);
-    }
-
-    @Override
-    public void format(ByteBuffer bb) {
-        managedObject.format(bb);
-        avl.format(bb);
-    }
-
-    @Override
-    public ManagedObjectIdentifier getManagedObject() {
-        return managedObject;
-    }
-
-    @Override
-    public AttributeValueList getAttributes() {
-        return avl;
-    }
-
-    @Override
-    public String toString() {
-        return "[managedObject=" + managedObject + ",attrs=" + avl + "]";
-    }
+    void setEvent(DataExportEvent event);
 }

@@ -12,7 +12,7 @@
  ******************************************************************************/
 package drivers.philips.intellivue.dataexport;
 
-public interface DataExportLinkedResult extends DataExportResult {
+public interface DataExportLinkedResult extends DataExportResultInterface {
     RemoteOperationLinkedState getLinkedState();
 
     short getLinkedCount();

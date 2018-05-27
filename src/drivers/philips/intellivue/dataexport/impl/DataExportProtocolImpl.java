@@ -62,13 +62,13 @@ public class DataExportProtocolImpl implements DataExportProtocol {
             message.parse(bb);
             return message;
         case Result:
-            invokeId = DataExportResultImpl.peekInvokeId(bb);
+            invokeId = DataExportResult.peekInvokeId(bb);
             if (linked.containsKey(invokeId)) {
                 DataExportLinkedResult r = linked.remove(invokeId);
                 r.parseMore(bb);
                 return r;
             } else {
-                message = new DataExportResultImpl();
+                message = new DataExportResult();
                 message.parse(bb);
                 return message;
             }

@@ -42,7 +42,7 @@ public class ConnectIndicationImpl implements ConnectIndication {
     private RemoteOperation remoteOperation = RemoteOperation.Invoke;
 
     private int invokeId;
-    private CommandType commandType = CommandType.Get;
+    private CommandType commandType = CommandType.CMD_GET;
 
     private final EventReport report = new EventReport();
     private final AttributeValueList attrs = new AttributeValueList();

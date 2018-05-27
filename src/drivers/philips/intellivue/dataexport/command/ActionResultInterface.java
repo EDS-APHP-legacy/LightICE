@@ -12,12 +12,17 @@
  ******************************************************************************/
 package drivers.philips.intellivue.dataexport.command;
 
-import drivers.philips.intellivue.data.AttributeValueList;
-import drivers.philips.intellivue.data.ManagedObjectIdentifier;
+import drivers.philips.intellivue.data.OIDType;
+import drivers.philips.intellivue.dataexport.DataExportAction;
 import drivers.philips.intellivue.dataexport.DataExportCommand;
 
-public interface GetResult extends DataExportCommand {
-    ManagedObjectIdentifier getManagedObject();
+public interface ActionResultInterface extends DataExportCommand {
 
-    AttributeValueList getAttributeList();
+    OIDType getActionType();
+
+    void setActionType(OIDType type);
+
+    DataExportAction getAction();
+
+    void setAction(DataExportAction action);
 }

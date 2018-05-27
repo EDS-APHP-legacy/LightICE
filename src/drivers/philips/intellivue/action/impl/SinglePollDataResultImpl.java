@@ -23,7 +23,7 @@ import drivers.philips.intellivue.data.AbsoluteTime;
 import drivers.philips.intellivue.data.OIDType;
 import drivers.philips.intellivue.data.RelativeTime;
 import drivers.philips.intellivue.data.Type;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 import drivers.philips.intellivue.util.Util;
 
 /**
@@ -38,15 +38,15 @@ public class SinglePollDataResultImpl implements SinglePollDataResult {
     private OIDType polledAttrGroup;
     private final List<SingleContextPoll> pollInfoList = new ArrayList<SingleContextPoll>();
 
-    private ActionResult action;
+    private ActionResultInterface action;
 
     @Override
-    public ActionResult getAction() {
+    public ActionResultInterface getAction() {
         return action;
     }
 
     @Override
-    public void setAction(ActionResult action) {
+    public void setAction(ActionResultInterface action) {
         this.action = action;
     }
 

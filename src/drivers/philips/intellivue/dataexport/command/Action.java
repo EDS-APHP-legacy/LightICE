@@ -14,7 +14,7 @@ package drivers.philips.intellivue.dataexport.command;
 
 import drivers.philips.intellivue.dataexport.DataExportAction;
 
-public interface Action extends ActionResult {
+public interface Action extends ActionResultInterface {
     long getScope();
 
     void setScope(long x);

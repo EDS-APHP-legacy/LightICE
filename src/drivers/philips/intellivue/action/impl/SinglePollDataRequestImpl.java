@@ -18,7 +18,7 @@ import common.io.util.Bits;
 import drivers.philips.intellivue.action.SinglePollDataRequest;
 import drivers.philips.intellivue.data.OIDType;
 import drivers.philips.intellivue.data.Type;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
 
 /**
  * @author Jeff Plourde
@@ -29,15 +29,15 @@ public class SinglePollDataRequestImpl implements SinglePollDataRequest {
     private final Type polledObjectType = new Type();
     private OIDType polledAttributeGroup;
 
-    private ActionResult action;
+    private ActionResultInterface action;
 
     @Override
-    public ActionResult getAction() {
+    public ActionResultInterface getAction() {
         return action;
     }
 
     @Override
-    public void setAction(ActionResult action) {
+    public void setAction(ActionResultInterface action) {
         this.action = action;
     }
 

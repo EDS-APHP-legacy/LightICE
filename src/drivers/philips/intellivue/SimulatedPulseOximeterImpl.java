@@ -43,10 +43,10 @@ import drivers.philips.intellivue.data.SampleArrayObservedValue;
 import drivers.philips.intellivue.data.SampleArraySpecification;
 import drivers.philips.intellivue.data.UnitCode;
 import drivers.philips.intellivue.dataexport.CommandType;
-import drivers.philips.intellivue.dataexport.DataExportResult;
-import drivers.philips.intellivue.dataexport.command.ActionResult;
-import drivers.philips.intellivue.dataexport.command.impl.ActionResultImpl;
-import drivers.philips.intellivue.dataexport.impl.DataExportResultImpl;
+import drivers.philips.intellivue.dataexport.DataExportResultInterface;
+import drivers.philips.intellivue.dataexport.command.ActionResultInterface;
+import drivers.philips.intellivue.dataexport.command.impl.ActionResult;
+import drivers.philips.intellivue.dataexport.impl.DataExportResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +70,8 @@ public class SimulatedPulseOximeterImpl extends IntellivueAcceptor {
             SampleArrayCompoundObservedValue.class);
     private final NumericObservedValue pulse = new NumericObservedValue();
     private final NumericObservedValue spo2 = new NumericObservedValue();
-    private final DataExportResult der = new DataExportResultImpl();
-    private final ActionResult actionResult = new ActionResultImpl();
+    private final DataExportResultInterface der = new DataExportResult();
+    private final ActionResultInterface actionResult = new ActionResult();
     private final ExtendedPollDataResult ePollResult = new ExtendedPollDataResultImpl();
     private final SingleContextPoll scp = new SingleContextPollImpl();
     private final ObservationPoll op = new ObservationPollImpl();
@@ -222,7 +222,7 @@ public class SimulatedPulseOximeterImpl extends IntellivueAcceptor {
 
         spo2.setPhysioId(ObservedValue.NOM_PULS_OXIM_SAT_O2.asOID());
         spo2.setUnitCode(UnitCode.NOM_DIM_PERCENT.asOID());
-        der.setCommandType(CommandType.ConfirmedAction);
+        der.setCommandType(CommandType.CMD_CONFIRMED_ACTION);
         der.setCommand(actionResult);
         actionResult.setActionType(ObjectClass.NOM_ACT_POLL_MDIB_DATA_EXT.asOID());
         actionResult.setAction(ePollResult);

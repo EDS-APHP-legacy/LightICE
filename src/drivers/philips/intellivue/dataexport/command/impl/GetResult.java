@@ -17,13 +17,13 @@ import java.nio.ByteBuffer;
 import drivers.philips.intellivue.data.AttributeValueList;
 import drivers.philips.intellivue.data.ManagedObjectIdentifier;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
-import drivers.philips.intellivue.dataexport.command.GetResult;
+import drivers.philips.intellivue.dataexport.command.GetResultInterface;
 
 /**
  * @author Jeff Plourde
  *
  */
-public class GetResultImpl implements GetResult {
+public class GetResult implements GetResultInterface {
 
     private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
     private final AttributeValueList attr = new AttributeValueList();

@@ -18,6 +18,6 @@ import drivers.philips.intellivue.dataexport.command.EventReportResult;
  * @author Jeff Plourde
  *
  */
-public class EventReportResultImpl extends EventReportImpl implements EventReportResult {
+public class EventReportResultImpl extends EventReport implements EventReportResult {
 
 }

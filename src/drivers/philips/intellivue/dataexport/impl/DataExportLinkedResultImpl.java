@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Jeff Plourde
  *
  */
-public class DataExportLinkedResultImpl extends DataExportResultImpl implements DataExportLinkedResult {
+public class DataExportLinkedResultImpl extends DataExportResult implements DataExportLinkedResult {
     private RemoteOperationLinkedState state;
     private short count;
 

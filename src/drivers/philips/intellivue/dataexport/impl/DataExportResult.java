@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 import common.io.util.Bits;
 import drivers.philips.intellivue.dataexport.CommandType;
 import drivers.philips.intellivue.dataexport.DataExportCommand;
-import drivers.philips.intellivue.dataexport.DataExportResult;
+import drivers.philips.intellivue.dataexport.DataExportResultInterface;
 import drivers.philips.intellivue.dataexport.RemoteOperation;
 import drivers.philips.intellivue.dataexport.command.CommandFactory;
 import drivers.philips.intellivue.util.Util;
@@ -26,7 +26,7 @@ import drivers.philips.intellivue.util.Util;
  * @author Jeff Plourde
  *
  */
-public class DataExportResultImpl implements DataExportResult {
+public class DataExportResult implements DataExportResultInterface {
     protected int invokeId;
     protected CommandType commandType;
 
