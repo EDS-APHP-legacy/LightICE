@@ -34,7 +34,7 @@
     {
       "type": "stdout",
       "serializer": "json",
-      "serializer_flat": false,
+      "serializer_flat": false
     }
   ],
   "servers": [
@@ -53,8 +53,9 @@
       "service": "ICU",
       "sector": "blue",
       "room": "A7",
-      "serialPort": "tty_a7",
-      "driver": "philips_rs232"
+      "hostname": "10.172.104.35",
+      "port": 24105,
+      "driver": "philips_ethernet"
     },
     {
       "alias": "Device three",
@@ -62,8 +63,9 @@
       "service": "ICU",
       "sector": "yellow",
       "room": "Z2",
-      "serialPort": "tty_z2",
-      "driver": "philips_rs232"
+      "hostname": "10.172.104.36",
+      "port": 24105,
+      "driver": "philips_ethernet"
     },
     {
       "alias": "Device four",

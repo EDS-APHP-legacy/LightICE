@@ -15,7 +15,7 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import runner.philips.SerialIntellivueRunner;
-import runner.philips.EthernetIntellivueRunner;
+import runner.philips.EthernetAdapter;
 import utils.Device;
 
 import java.io.IOException;
@@ -386,7 +386,7 @@ public abstract class AbstractDeviceRunner {
             case "philips_ethernet": {
                 deviceIdentity.setManufacturer("Philips");
                 deviceIdentity.setModel("Intellivue");
-                return new EthernetIntellivueRunner(deviceIdentity);
+                return new EthernetAdapter(deviceIdentity);
             }
             default: throw new ClassNotFoundException("Class for the driver " + driverName + " not available.");
         }

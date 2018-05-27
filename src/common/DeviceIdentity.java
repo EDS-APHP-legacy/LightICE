@@ -33,13 +33,13 @@ public class DeviceIdentity {
             UDI_CHARS[x++] = i;
     }
 
-    public DeviceIdentity(String site, String service, String sector, String room, String alias, NetworkAddress serialPort, String driver) {
+    public DeviceIdentity(String site, String service, String sector, String room, String alias, NetworkAddress addr, String driver) {
         this.site = site;
         this.service = service;
         this.sector = sector;
         this.room = room;
         this.alias = alias;
-        this.addr = serialPort;
+        this.addr = addr;
         this.driver = driver;
         this.uniqueDeviceIdentifier = randomUDI();
     }

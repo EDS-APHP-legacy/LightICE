@@ -1,4 +1,5 @@
 import export.writers.Writer;
+import org.slf4j.Logger;
 import utils.Conf;
 import utils.Device;
 
@@ -12,7 +13,7 @@ public class Main {
         Conf conf = parseConfig("conf.json");
 
         for (Device device : conf.getDevices()) {
-            System.out.println("Connecting to " + device.deviceIdentity.getAlias() + "...");
+            System.out.println("Connecting to " + device.deviceIdentity.getAlias() + " (" + device.deviceIdentity.getAddrString() + ")...");
             device.run();
             for (Writer writer : conf.getWriters())
                 device.addListener(writer);
