@@ -327,6 +327,9 @@ public class Intellivue implements NetworkConnection {
     }
 
     public int requestSet(Label[] numerics, Label[] realtimeSampleArrays) throws IOException {
+        // This is here that we set de "priority list", containing the numerics and waveforms that we want to
+        // receive from the monitor
+
         int invoke;
         DataExportInvoke message = new DataExportInvokeImpl();
         message.setCommandType(CommandType.CMD_CONFIRMED_SET);
@@ -372,23 +375,19 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handler(SinglePollDataResult result) {
-        // TODO: what is this for?
-        log.warn("Unimplemented handler for SinglePollDataResult: " + result);
+        // Implemented by the child class
     }
 
     protected void handler(ExtendedPollDataResult result) {
-        // TODO: what is this for?
-        log.warn("Unimplemented handler for ExtendedPollDataResult: " + result);
+        // Implemented by the child class
     }
 
     protected void handler(SetResultInterface result, boolean confirmed) {
-        // TODO: what is this for?
-        log.warn("Unimplemented handler for SetResult: " + result);
+        // Implemented by the child class
     }
 
     protected void handler(GetInterface get) {
-        // TODO: what is this for?
-        log.warn("Unimplemented handler for CMD_GET: " + get);
+        // Implemented by the child class
     }
 
     protected void handler(SetInterface set, boolean confirmed) throws IOException {

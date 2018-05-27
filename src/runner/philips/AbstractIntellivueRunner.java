@@ -22,6 +22,7 @@ import drivers.philips.intellivue.dataexport.DataExportError;
 import drivers.philips.intellivue.dataexport.DataExportMessage;
 import drivers.philips.intellivue.dataexport.DataExportResultInterface;
 import drivers.philips.intellivue.dataexport.command.EventReportInterface;
+import drivers.philips.intellivue.dataexport.command.GetInterface;
 import drivers.philips.intellivue.dataexport.command.SetResultInterface;
 import drivers.philips.intellivue.dataexport.event.MdsCreateEvent;
 import datatypes.SampleArray;
@@ -467,7 +468,17 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
+        protected void handler(GetInterface get) {
+            // TODO: what is this for?
+            super.handler(get);
+        }
+
+        @Override
         protected void handler(SetResultInterface result, boolean confirmed) {
+            // This is where we receive the response for the SET PRIORITY LIST REQUEST
+            // The response informs us about the numerics and waveforms available among what
+            // we asked to receive.
+
             super.handler(result, confirmed);
             AttributeValueList attrs = result.getAttributes();
             Attribute<TextIdList> ati = attrs.getAttribute(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST, TextIdList.class);
@@ -493,8 +504,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     MdsCreateEvent createEvent = (MdsCreateEvent) eventReport.getEvent();
                     AttributeValueList attrs = createEvent.getAttributes();
                     Attribute<SystemModel> asm = attrs.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
-//                Attribute<org.mdpnp.devices.philips.intellivue.data.String> as = attrs.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL,
-//                        org.mdpnp.devices.philips.intellivue.data.String.class);
+                    Attribute<drivers.philips.intellivue.data.String> as = attrs.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL, drivers.philips.intellivue.data.String.class);
 
                     intellivueRelativeClock = new IntellivueRelativeClock();
                     intellivueRelativeClock.setDeviceStartTime(attrs);
