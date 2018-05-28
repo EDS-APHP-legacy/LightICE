@@ -127,7 +127,7 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAccept message) {
-        log.warn("Unimplemented handleAssociationMessage for AssociationAccept message " + message.toString());
+        // Called by the child class
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationFinish message) throws IOException {
@@ -136,19 +136,19 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationRefuse message) {
-        log.warn("Unimplemented handleAssociationMessage for AssociationRefuse message " + message.toString());
+        // Called by the child class
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationDisconnect message) {
-        log.warn("Unimplemented handleAssociationMessage for AssociationDisconnect message " + message.toString());
+        // Called by the child class
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationAbort message) {
-        log.warn("Unimplemented handleAssociationMessage for AssociationAbort message " + message.toString());
+        // Called by the child class
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationConnect message) {
-        log.warn("Unimplemented handleAssociationMessage for AssociationConnect message " + message.toString());
+        // Called by the child class
     }
 
     protected void handleAssociationMessage(SocketAddress sockaddr, AssociationMessage message) throws IOException {
@@ -375,19 +375,19 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handler(SinglePollDataResult result) {
-        // Implemented by the child class
+        // Called by the child class
     }
 
     protected void handler(ExtendedPollDataResult result) {
-        // Implemented by the child class
+        // Called by the child class
     }
 
     protected void handler(SetResultInterface result, boolean confirmed) {
-        // Implemented by the child class
+        // Called by the child class
     }
 
     protected void handler(GetInterface get) {
-        // Implemented by the child class
+        // Called by the child class
     }
 
     protected void handler(SetInterface set, boolean confirmed) throws IOException {
@@ -519,7 +519,7 @@ public class Intellivue implements NetworkConnection {
         case Result:
             // A Remote Operation Result message is a response to an Operation Invoke message requiring
             // confirmation.
-            log.warn("Unimplemented Result remoteOperation!");
+            handleDataExportMessage((DataExportResultInterface) message);
             break;
         case LinkedResult:
             // In some cases, the total data that must be returned as a result of a command may exceed the maximum

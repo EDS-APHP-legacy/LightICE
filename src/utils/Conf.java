@@ -67,28 +67,32 @@ public class Conf {
 
         JsonObject confObj = Json.parse(readFileToString(configurationPath)).asObject();
 
-        switch (confObj.get("log_level").asString().toUpperCase()) {
-            case "TRACE":
-                conf.setLogLevel(Level.TRACE);
-                break;
-            case "DEBUG":
-                conf.setLogLevel(Level.DEBUG);
-                break;
-            case "INFO":
-                conf.setLogLevel(Level.INFO);
-                break;
-            case "WARN":
-                conf.setLogLevel(Level.WARN);
-                break;
-            case "ERROR":
-                conf.setLogLevel(Level.ERROR);
-                break;
-            case "OFF":
-                conf.setLogLevel(Level.OFF);
-                break;
-            default:
-                throw new UnexpectedException("log_level variable should be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF");
+        try {
+            switch (confObj.get("log_level").asString().toUpperCase()) {
+                case "TRACE":
+                    conf.setLogLevel(Level.TRACE);
+                    break;
+                case "DEBUG":
+                    conf.setLogLevel(Level.DEBUG);
+                    break;
+                case "INFO":
+                    conf.setLogLevel(Level.INFO);
+                    break;
+                case "WARN":
+                    conf.setLogLevel(Level.WARN);
+                    break;
+                case "ERROR":
+                    conf.setLogLevel(Level.ERROR);
+                    break;
+                case "OFF":
+                    conf.setLogLevel(Level.OFF);
+                    break;
+                default:
+                    throw new UnexpectedException("log_level variable should be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF");
 
+            }
+        } catch (NullPointerException e) {
+            System.err.println("[ERROR] Configuration incorrect, you probably forgot log_level.");
         }
 
         for (JsonValue value : confObj.get("writers").asArray()) {
