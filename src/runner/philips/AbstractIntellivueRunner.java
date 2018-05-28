@@ -985,7 +985,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     "NOM_AWAY_CO2_ET\tMDC_AWAY_CO2_ET\tNLS_NOM_AWAY_CO2\tN\n" +
                     "NOM_PULS_OXIM_SAT_O2\tMDC_PULS_OXIM_SAT_O2\tNLS_NOM_PULS_OXIM_SAT_O2\tN\n" +
                     "NOM_PLETH_PULS_RATE\tMDC_PULS_OXIM_PULS_RATE\tNLS_NOM_PULS_OXIM_PULS_RATE\tN\n" +
-                    "#NOM_PULS_RATE\tMDC_PULS_RATE\tNLS_NOM_PULS_RATE\tN\n" +
+                    "NOM_PULS_RATE\tMDC_PULS_RATE\tNLS_NOM_PULS_RATE\tN\n" +
                     "NOM_ECG_CARD_BEAT_RATE\tMDC_ECG_HEART_RATE\tNLS_NOM_ECG_CARD_BEAT_RATE\tN\n" +
                     "# This is the named numeric we want in the priority list\n" +
                     "NOM_PRESS_BLD_NONINV\tMDC_PRESS_BLD_NONINV\tNLS_NOM_PRESS_BLD_NONINV\tN\n" +
@@ -1000,13 +1000,13 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     "NOM_ECG_ELEC_POTL_I\tMDC_ECG_LEAD_I\tNLS_NOM_ECG_ELEC_POTL_I\tW\n" +
                     "NOM_ECG_ELEC_POTL_II\tMDC_ECG_LEAD_II\tNLS_NOM_ECG_ELEC_POTL_II\tW\n" +
                     "NOM_ECG_ELEC_POTL_III\tMDC_ECG_LEAD_III\tNLS_NOM_ECG_ELEC_POTL_III\tW\n" +
-                    "#NOM_ECG_ELEC_POTL_AVF\tMDC_ECG_LEAD_AVF\tNLS_NOM_ECG_ELEC_POTL_AVF\tW\n" +
-                    "#NOM_ECG_ELEC_POTL_AVL\tMDC_ECG_LEAD_AVL\tNLS_NOM_ECG_ELEC_POTL_AVL\tW\n" +
-                    "#NOM_ECG_ELEC_POTL_AVR\tMDC_ECG_LEAD_AVR\tNLS_NOM_ECG_ELEC_POTL_AVR\tW\n" +
-                    "#NOM_ECG_ELEC_POTL_V2\tMDC_ECG_LEAD_V2\tNLS_NOM_ECG_ELEC_POTL_V2\tW\n" +
-                    "#NOM_ECG_ELEC_POTL_V5\tMDC_ECG_LEAD_V5\tNLS_NOM_ECG_ELEC_POTL_V5\tW\n" +
+                    "NOM_ECG_ELEC_POTL_AVF\tMDC_ECG_LEAD_AVF\tNLS_NOM_ECG_ELEC_POTL_AVF\tW\n" +
+                    "NOM_ECG_ELEC_POTL_AVL\tMDC_ECG_LEAD_AVL\tNLS_NOM_ECG_ELEC_POTL_AVL\tW\n" +
+                    "NOM_ECG_ELEC_POTL_AVR\tMDC_ECG_LEAD_AVR\tNLS_NOM_ECG_ELEC_POTL_AVR\tW\n" +
+                    "NOM_ECG_ELEC_POTL_V2\tMDC_ECG_LEAD_V2\tNLS_NOM_ECG_ELEC_POTL_V2\tW\n" +
+                    "NOM_ECG_ELEC_POTL_V5\tMDC_ECG_LEAD_V5\tNLS_NOM_ECG_ELEC_POTL_V5\tW\n" +
                     "NOM_PRESS_BLD_ART_ABP\tMDC_PRESS_BLD_ART_ABP\tNLS_NOM_PRESS_BLD_ART_ABP\tW\n" +
-                    "#NOM_PRESS_BLD_ART\tMDC_PRESS_BLD_ART\tNLS_NOM_PRESS_BLD_ART\tW\n" +
+                    "NOM_PRESS_BLD_ART\tMDC_PRESS_BLD_ART\tNLS_NOM_PRESS_BLD_ART\tW\n" +
                     "\n" + "\n";
             BufferedReader br = new BufferedReader(new StringReader(map));
             String line = null;

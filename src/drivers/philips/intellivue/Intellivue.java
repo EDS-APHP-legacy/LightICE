@@ -547,11 +547,38 @@ public class Intellivue implements NetworkConnection {
         pps.setMaxMtuTx(1456);
 
         MdibObjectSupport obj = req.getUserInfo().getMdibObjectSupport();
+
+        // MDS (The Medical Device System object (MDS) is an abstraction of a device that
+        //      provides medical information in the form of objects that are defined in the
+        //      Medical package of the Domain Information Model. Further specializations
+        //      of this class are used to represent differences in complexity and scope. As
+        //      a base class, the MDS cannot be instantiated.)
         obj.addClass(ObjectClass.NOM_MOC_VMS_MDS, 1);
+
+        // Numerics (The   Numeric   object   represents   numerical   measurements   and   status
+        //           information like amplitude measures, counters etc.)
         obj.addClass(ObjectClass.NOM_MOC_VMO_METRIC_NU, 0xC9);
+
+        // Waveforms (The Time Sample Array object is a sample array that represents a real-time
+        //            continuous waveform.)
         obj.addClass(ObjectClass.NOM_MOC_VMO_METRIC_SA_RT, 0x3C);
+
+        // Enumeration (The Enumeration object represents status information and/or annotation
+        //              information. Observation values may be presented in the form of normative
+        //              codes (that are included in the nomenclature defined in this standard or in
+        //              some other external nomenclature) or in the form of free text.)
         obj.addClass(ObjectClass.NOM_MOC_VMO_METRIC_ENUM, 0x10);
+
+        // Patient Demographics (The  Patient  Demographics  object  contains  minimal  patient
+        //                       information  as required by medical devices.)
         obj.addClass(ObjectClass.NOM_MOC_PT_DEMOG, 1);
+
+        // Alerts (The Alert Monitor object represents the output of a device or system alarm
+        //         processor and as such it represents the overall device or system alarm
+        //         condition. As such it provides a list of all alarm conditions of the system in
+        //         its scope. This includes global state information and individual alarm state
+        //         information that allows the implementation of a safety standard compliant
+        //         alarm display on a remote system.)
         obj.addClass(ObjectClass.NOM_MOC_VMO_AL_MON, 1);
 
         // obj.addClass(ObjectClass.NOM_MOC_SCAN, 1);

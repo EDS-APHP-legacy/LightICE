@@ -214,7 +214,9 @@ public class AttributeFactory {
             case NOM_ATTR_TIME_PD_POLL:
                 return RelativeTime.class;
             case NOM_ATTR_POLL_RTSA_PRIO_LIST:
+                // Received MDS Set Priority List Result Wave.
             case NOM_ATTR_POLL_NU_PRIO_LIST:
+                // Received MDS Set Priority List Result Numerics.
             case NOM_ATTR_POLL_OBJ_PRIO_NUM:
                 return TextIdList.class;
             case NOM_ATTR_PT_DEMOG_ST:
