@@ -13,9 +13,11 @@
 package drivers.philips.intellivue;
 
 import java.io.IOException;
+import java.lang.String;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.text.DateFormat;
@@ -46,17 +48,8 @@ import drivers.philips.intellivue.association.impl.AssociationDisconnectImpl;
 import drivers.philips.intellivue.attribute.Attribute;
 import drivers.philips.intellivue.attribute.AttributeFactory;
 import drivers.philips.intellivue.connectindication.ConnectIndication;
-import drivers.philips.intellivue.data.AttributeId;
-import drivers.philips.intellivue.data.Label;
-import drivers.philips.intellivue.data.MdibObjectSupport;
-import drivers.philips.intellivue.data.NomPartition;
-import drivers.philips.intellivue.data.OIDType;
-import drivers.philips.intellivue.data.ObjectClass;
-import drivers.philips.intellivue.data.PollProfileSupport;
-import drivers.philips.intellivue.data.ProtocolSupport;
+import drivers.philips.intellivue.data.*;
 import drivers.philips.intellivue.data.ProtocolSupport.ProtocolSupportEntry;
-import drivers.philips.intellivue.data.RelativeTime;
-import drivers.philips.intellivue.data.TextIdList;
 import drivers.philips.intellivue.dataexport.CommandType;
 import drivers.philips.intellivue.dataexport.DataExportError;
 import drivers.philips.intellivue.dataexport.DataExportInvoke;
@@ -83,6 +76,7 @@ public class Intellivue implements NetworkConnection {
     private final ByteBuffer inBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
     private final ByteBuffer outBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
     private final Protocol protocol = new CompoundProtocol();
+    public boolean getResponseReceived = false;
 
     public Intellivue() {
         inBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -115,11 +109,17 @@ public class Intellivue implements NetworkConnection {
             log.trace("In Message(" + simpleDateformat.format(time) + "):\n" + lineWrap(message.toString()));
         }
 
+
         if (message instanceof DataExportMessage) {
+            // For everything else than Connect indication and Association messages
             handleDataExportMessage((DataExportMessage) message);
         } else if (message instanceof AssociationMessage) {
+            // * After receiving the connect indication, the client sends an Association request, and the monitor
+            //   sends back an Association result
+            // * When the client sends a "release" association request, the monitor sends back an Association result
             handleAssociationMessage(sockaddr, (AssociationMessage) message);
         } else if (message instanceof ConnectIndication) {
+            // Connect indications are sent by the monitor to clients to let them create an association request
             handler((ConnectIndication) message, sk);
         } else {
             log.warn("Message is an instance of an unknown class (" + message.getClass() + "), cannot handle it.");
@@ -310,6 +310,9 @@ public class Intellivue implements NetworkConnection {
     }
 
     public int requestGet(List<OIDType> oids) throws IOException {
+        // This is here that we get the "priority list", containing the numerics and waveforms
+        // available on the monitor
+
         int invoke = nextInvoke();
 
         DataExportInvoke message = new DataExportInvokeImpl();
@@ -327,8 +330,8 @@ public class Intellivue implements NetworkConnection {
     }
 
     public int requestSet(Label[] numerics, Label[] realtimeSampleArrays) throws IOException {
-        // This is here that we set de "priority list", containing the numerics and waveforms that we want to
-        // receive from the monitor
+        // This is here that we set the "priority list", containing the numerics and waveforms
+        // that we want to receive from the monitor
 
         int invoke;
         DataExportInvoke message = new DataExportInvokeImpl();
@@ -361,11 +364,14 @@ public class Intellivue implements NetworkConnection {
         return invoke;
     }
 
-    protected void handler(EventReportInterface eventReport, boolean confirm) throws IOException {
-        if (confirm) {
+    protected void handler(EventReportInterface eventReport, boolean sendConfirmation) throws IOException {
+        if (sendConfirmation) {
             {
+                // We received a MDS create event report,
+                // we must send a MDS create event result in return
+                // else the monitor will stop the association with the client
+                // .
                 DataExportResultInterface message = new DataExportResult();
-
                 message.setCommandType(CommandType.CMD_CONFIRMED_EVENT_REPORT);
                 message.setInvoke(eventReport.getMessage().getInvoke());
                 message.setCommand(eventReport.createConfirm());
@@ -401,9 +407,41 @@ public class Intellivue implements NetworkConnection {
 
     }
 
-    protected void handler(GetResultInterface result) {
-        // TODO: what is this for?
-        log.warn("Unimplemented handler for GetResult: " + result);
+    protected void handler(GetResultInterface result) throws IOException {
+        List<TextId> numericsPriorityList = null;
+        List<TextId> waveformsPriorityList = null;
+        ArrayList<Label> setNumerics = new ArrayList<>();
+        ArrayList<Label> setWaveforms = new ArrayList<>();
+        try {
+            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()).getValue().getClass();
+
+//            Thread.currentThread().setContextClassLoader(null);
+
+            ByteBuffer buffer = ByteBuffer.allocateDirect(1000000);
+            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()).getValue().format(buffer);
+            buffer.position(0);
+            TextIdList nums = new TextIdList();
+            nums.parse(buffer);
+            numericsPriorityList = nums.getList();
+
+
+            buffer = ByteBuffer.allocateDirect(1000000);
+            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_RTSA_PRIO_LIST.asOid()).getValue().format(buffer);
+            TextIdList wavs = new TextIdList();
+            wavs.parse(buffer);
+            waveformsPriorityList = nums.getList();
+
+        } catch (ClassCastException e) {
+            System.err.println(e.toString());
+        }
+        for (int i = 0; i < numericsPriorityList.size(); i++)
+            if (numericsPriorityList.get(i).getTextId() != 0 && Label.valueOf(numericsPriorityList.get(i).getTextId()) != null)
+                setNumerics.add(Label.valueOf(numericsPriorityList.get(i).getTextId()));
+        for (int i = 0; i < waveformsPriorityList.size(); i++)
+            if (waveformsPriorityList.get(i).getTextId() != 0 && Label.valueOf(waveformsPriorityList.get(i).getTextId()) != null)
+                setWaveforms.add(Label.valueOf(waveformsPriorityList.get(i).getTextId()));
+
+        requestSet(setNumerics.toArray(new Label[0]), setWaveforms.toArray(new Label[0]));
     }
 
     protected void handleActionResult(ActionResultInterface action, boolean request) {
@@ -452,7 +490,7 @@ public class Intellivue implements NetworkConnection {
         log.warn("Unimplemented ExtendedPollDataRequest for CMD_GET: " + action);
     }
 
-    protected void handleDataExportMessage(DataExportResultInterface message) {
+    protected void handleDataExportMessage(DataExportResultInterface message) throws IOException {
         switch (message.getCommandType()) {
         case CMD_CONFIRMED_ACTION:
             handleActionResult((ActionResultInterface) message.getCommand(), false);
@@ -507,11 +545,12 @@ public class Intellivue implements NetworkConnection {
     }
 
     protected void handleDataExportMessage(DataExportMessage message) throws IOException {
-        if (null == message) {
-            // FIXME: why would it be null?
-            log.info("FIXME: why would it be null?");
-            return;
-        }
+//        if (null == message) {
+//            // FIXME: why would it be null?
+//            log.info("FIXME: why would it be null?");
+//            return;
+//        }
+
         switch (message.getRemoteOperation()) {
         case Invoke:
             handleDataExportMessage((DataExportInvoke) message);

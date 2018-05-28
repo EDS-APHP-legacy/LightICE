@@ -16,7 +16,7 @@ public class GetArgument implements GetInterface {
 
     private final ManagedObjectIdentifier managedObject = new ManagedObjectIdentifier();
     private long scope;
-    private final List<OIDType> list = new ArrayList<OIDType>();
+    private final List<OIDType> list = new ArrayList<>();
 
     private DataExportMessage message;
 

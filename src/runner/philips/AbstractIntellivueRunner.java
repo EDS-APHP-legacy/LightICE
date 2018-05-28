@@ -425,7 +425,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handleDataExportMessage(DataExportResultInterface message) {
+        protected void handleDataExportMessage(DataExportResultInterface message) throws IOException {
             // if we were checking for confirmation of outgoing confirmed
             // messages this would be the place to find confirmations
             super.handleDataExportMessage(message);
@@ -470,6 +470,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         @Override
         protected void handler(GetInterface get) {
             // TODO: what is this for?
+
+            this.getResponseReceived = true;
             super.handler(get);
         }
 
@@ -496,19 +498,24 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
         }
 
         @Override
-        protected void handler(EventReportInterface eventReport, boolean confirm) throws IOException {
-            // The super sends confirmations where appropriate by default
-            super.handler(eventReport, confirm);
+        protected void handler(EventReportInterface eventReport, boolean sendConfirmation) throws IOException {
+
+            // The super takes care of sending the MDS_CREATE result back to the monitor
+            super.handler(eventReport, sendConfirmation);
+
             switch (ObjectClass.valueOf(eventReport.getEventType().getType())) {
-                case NOM_NOTI_MDS_CREAT:
-                    MdsCreateEvent createEvent = (MdsCreateEvent) eventReport.getEvent();
-                    AttributeValueList attrs = createEvent.getAttributes();
-                    Attribute<SystemModel> asm = attrs.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
+                case NOM_NOTI_MDS_CREAT: // We received a MDS Create Event Report
+
+                    // Here we receive information given by the MDS request:
+                    AttributeValueList attrs = ((MdsCreateEvent) eventReport.getEvent()).getAttributes();
                     Attribute<drivers.philips.intellivue.data.String> as = attrs.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL, drivers.philips.intellivue.data.String.class);
 
+                    // Such as the monitor clock
                     intellivueRelativeClock = new IntellivueRelativeClock();
                     intellivueRelativeClock.setDeviceStartTime(attrs);
 
+                    // Such as the System Model (manufacturer ID and a manufacturer-specific model number)
+                    Attribute<SystemModel> asm = attrs.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
                     if (null != asm) {
                         deviceIdentity.setManufacturer(asm.getValue().getManufacturer().getString());
                     }
@@ -520,7 +527,23 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
                     requestSinglePoll(ObjectClass.NOM_MOC_VMS_MDS, AttributeId.NOM_ATTR_GRP_SYS_PROD);
 
-                    requestSet(numericLabels.values().toArray(new Label[0]), sampleArrayLabels.values().toArray(new Label[0]));
+                    requestGet(
+                        new OIDType[]{
+                            AttributeId.NOM_ATTR_POLL_RTSA_PRIO_LIST.asOid(),
+                            AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()
+                    });
+//
+//                    while (!this.getResponseReceived) {
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        log.info("Getting priority list from monitor...");
+//                    }
+//                    this.getResponseReceived = false;
+
+
 
                     break;
                 default:
