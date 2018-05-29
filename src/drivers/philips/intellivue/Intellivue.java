@@ -441,6 +441,7 @@ public class Intellivue implements NetworkConnection {
             if (waveformsPriorityList.get(i).getTextId() != 0 && Label.valueOf(waveformsPriorityList.get(i).getTextId()) != null)
                 setWaveforms.add(Label.valueOf(waveformsPriorityList.get(i).getTextId()));
 
+        requestSinglePoll(ObjectClass.NOM_MOC_VMS_MDS, AttributeId.NOM_ATTR_GRP_SYS_PROD);
         requestSet(setNumerics.toArray(new Label[0]), setWaveforms.toArray(new Label[0]));
     }
 
