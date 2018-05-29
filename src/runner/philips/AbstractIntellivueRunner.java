@@ -587,7 +587,7 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_APPL, .class);
                     // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_ID, .class);
                     // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_PROD, .class);
-                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_VMO_DYN, .class);
+                    Attribute<TextIdList> test = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_VMO_DYN, TextIdList.class);
                     // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_VMO_STATIC, .class);
 
 
