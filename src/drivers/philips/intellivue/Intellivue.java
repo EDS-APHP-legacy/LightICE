@@ -369,8 +369,7 @@ public class Intellivue implements NetworkConnection {
             {
                 // We received a MDS create event report,
                 // we must send a MDS create event result in return
-                // else the monitor will stop the association with the client
-                // .
+                // else the monitor will stop the association with the client.
                 DataExportResultInterface message = new DataExportResult();
                 message.setCommandType(CommandType.CMD_CONFIRMED_EVENT_REPORT);
                 message.setInvoke(eventReport.getMessage().getInvoke());
@@ -412,28 +411,21 @@ public class Intellivue implements NetworkConnection {
         List<TextId> waveformsPriorityList = null;
         ArrayList<Label> setNumerics = new ArrayList<>();
         ArrayList<Label> setWaveforms = new ArrayList<>();
-        try {
-            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()).getValue().getClass();
 
-//            Thread.currentThread().setContextClassLoader(null);
+        ByteBuffer numsbuffer = ByteBuffer.allocateDirect(1000000);
+        result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()).getValue().format(numsbuffer);
+        numsbuffer.position(0);
+        TextIdList nums = new TextIdList();
+        nums.parse(numsbuffer);
+        numericsPriorityList = nums.getList();
 
-            ByteBuffer buffer = ByteBuffer.allocateDirect(1000000);
-            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST.asOid()).getValue().format(buffer);
-            buffer.position(0);
-            TextIdList nums = new TextIdList();
-            nums.parse(buffer);
-            numericsPriorityList = nums.getList();
+        ByteBuffer wavsbuffer = ByteBuffer.allocateDirect(1000000);
+        result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_RTSA_PRIO_LIST.asOid()).getValue().format(wavsbuffer);
+        wavsbuffer.position(0);
+        TextIdList wavs = new TextIdList();
+        wavs.parse(wavsbuffer);
+        waveformsPriorityList = nums.getList();
 
-
-            buffer = ByteBuffer.allocateDirect(1000000);
-            result.getAttributeList().get(AttributeId.NOM_ATTR_POLL_RTSA_PRIO_LIST.asOid()).getValue().format(buffer);
-            TextIdList wavs = new TextIdList();
-            wavs.parse(buffer);
-            waveformsPriorityList = nums.getList();
-
-        } catch (ClassCastException e) {
-            System.err.println(e.toString());
-        }
         for (int i = 0; i < numericsPriorityList.size(); i++)
             if (numericsPriorityList.get(i).getTextId() != 0 && Label.valueOf(numericsPriorityList.get(i).getTextId()) != null)
                 setNumerics.add(Label.valueOf(numericsPriorityList.get(i).getTextId()));
@@ -441,6 +433,10 @@ public class Intellivue implements NetworkConnection {
             if (waveformsPriorityList.get(i).getTextId() != 0 && Label.valueOf(waveformsPriorityList.get(i).getTextId()) != null)
                 setWaveforms.add(Label.valueOf(waveformsPriorityList.get(i).getTextId()));
 
+        log.info("Got the following numerics priority list: " + setNumerics);
+        log.info("Got the following waveforms priority list: " + setWaveforms);
+
+        // We can now send a request to SET the priority list
         requestSinglePoll(ObjectClass.NOM_MOC_VMS_MDS, AttributeId.NOM_ATTR_GRP_SYS_PROD);
         requestSet(setNumerics.toArray(new Label[0]), setWaveforms.toArray(new Label[0]));
     }

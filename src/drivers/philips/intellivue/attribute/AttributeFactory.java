@@ -20,7 +20,7 @@ import drivers.philips.intellivue.data.ApplicationArea;
 import drivers.philips.intellivue.data.AttributeId;
 import drivers.philips.intellivue.data.ByteArray;
 import drivers.philips.intellivue.data.CompoundNumericObservedValue;
-import drivers.philips.intellivue.data.DevAlarmList;
+import drivers.philips.intellivue.data.DeviceAlarmList;
 import drivers.philips.intellivue.data.DeviceAlertCondition;
 import drivers.philips.intellivue.data.DisplayResolution;
 import drivers.philips.intellivue.data.EnumMessage;
@@ -240,7 +240,7 @@ public class AttributeFactory {
                 return DeviceAlertCondition.class;
             case NOM_ATTR_AL_MON_T_AL_LIST:
             case NOM_ATTR_AL_MON_P_AL_LIST:
-                return DevAlarmList.class;
+                return DeviceAlarmList.class;
             default:
                 return null;
             }

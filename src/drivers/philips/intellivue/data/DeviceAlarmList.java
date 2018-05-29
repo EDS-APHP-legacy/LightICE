@@ -22,7 +22,7 @@ import drivers.philips.intellivue.util.Util;
  * @author Jeff Plourde
  *
  */
-public class DevAlarmList implements Value {
+public class DeviceAlarmList implements Value {
     private final List<DevAlarmEntry> value = new ArrayList<DevAlarmEntry>();
 
     @Override

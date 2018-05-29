@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2014, MD PnP Program
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
 package drivers.philips.intellivue;
 
 import java.io.IOException;
@@ -30,16 +18,11 @@ import drivers.philips.intellivue.association.impl.AssociationAcceptImpl;
 import drivers.philips.intellivue.attribute.Attribute;
 import drivers.philips.intellivue.attribute.AttributeFactory;
 import drivers.philips.intellivue.connectindication.ConnectIndicationImpl;
-import drivers.philips.intellivue.data.AttributeId;
-import drivers.philips.intellivue.data.ComponentId;
-import drivers.philips.intellivue.data.OIDType;
-import drivers.philips.intellivue.data.ObjectClass;
-import drivers.philips.intellivue.data.ProductionSpecification;
-import drivers.philips.intellivue.data.ProductionSpecificationType;
+import drivers.philips.intellivue.data.*;
 import drivers.philips.intellivue.data.ProtocolSupport.ProtocolSupportEntry;
 import drivers.philips.intellivue.data.ProtocolSupport.ProtocolSupportEntry.ApplicationProtocol;
 import drivers.philips.intellivue.data.ProtocolSupport.ProtocolSupportEntry.TransportProtocol;
-import drivers.philips.intellivue.data.SystemModel;
+import drivers.philips.intellivue.data.String;
 import drivers.philips.intellivue.dataexport.CommandType;
 import drivers.philips.intellivue.dataexport.DataExportInvoke;
 import drivers.philips.intellivue.dataexport.command.EventReportInterface;
@@ -50,10 +33,6 @@ import drivers.philips.intellivue.dataexport.impl.DataExportInvokeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Jeff Plourde
- *
- */
 public class IntellivueAcceptor extends Intellivue {
 
     private static final Logger log = LoggerFactory.getLogger(IntellivueAcceptor.class);
@@ -131,9 +110,10 @@ public class IntellivueAcceptor extends Intellivue {
             throw new RuntimeException(e1);
         }
         MdsCreateEventImpl m = new MdsCreateEventImpl();
-        Attribute<SystemModel> asm = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
-        Attribute<drivers.philips.intellivue.data.String> as = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL,
-                drivers.philips.intellivue.data.String.class);
+
+        Attribute<SystemModel> systemModelAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
+
+        Attribute<String> as = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL, drivers.philips.intellivue.data.String.class);
         Attribute<ProductionSpecification> ps = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_PROD_SPECN, ProductionSpecification.class);
 
         ProductionSpecification.Entry e = new ProductionSpecification.Entry();
@@ -141,9 +121,9 @@ public class IntellivueAcceptor extends Intellivue {
         e.setComponentId(ComponentId.ID_COMP_PRODUCT);
         e.setSpecType(ProductionSpecificationType.SERIAL_NUMBER);
         ps.getValue().getList().add(e);
-        asm.getValue().setManufacturer("MD PNP");
-        asm.getValue().setModelNumber("ICE TEST ONE");
-        m.getAttributes().add(asm);
+        systemModelAttribute.getValue().setManufacturer("MD PNP");
+        systemModelAttribute.getValue().setModelNumber("ICE TEST ONE");
+        m.getAttributes().add(systemModelAttribute);
         m.getAttributes().add(as);
         m.getAttributes().add(ps);
 
@@ -160,7 +140,7 @@ public class IntellivueAcceptor extends Intellivue {
         } catch (IOException e1) {
             throw new RuntimeException(e1);
         }
-    };
+    }
 
     public IntellivueAcceptor() throws IOException {
         this(DEFAULT_UNICAST_PORT);
@@ -219,7 +199,7 @@ public class IntellivueAcceptor extends Intellivue {
 
     protected final int port;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(java.lang.String[] args) throws IOException {
         final int port = args.length > 0 ? Integer.parseInt(args[0]) : Intellivue.DEFAULT_UNICAST_PORT;
         final NetworkLoop networkLoop = new NetworkLoop();
         final IntellivueAcceptor intellivueAcceptor = new IntellivueAcceptor(port);

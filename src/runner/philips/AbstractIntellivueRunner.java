@@ -510,14 +510,94 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
                     AttributeValueList attrs = ((MdsCreateEvent) eventReport.getEvent()).getAttributes();
                     Attribute<drivers.philips.intellivue.data.String> as = attrs.getAttribute(AttributeId.NOM_ATTR_ID_BED_LABEL, drivers.philips.intellivue.data.String.class);
 
+                    Attribute<DeviceAlarmList> devPAlarmListAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_P_AL_LIST, DeviceAlarmList.class);
+                    Attribute<DeviceAlarmList> devTAlarmListAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_T_AL_LIST, DeviceAlarmList.class);
+                    Attribute<Altitude> altitudeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ALTITUDE, Altitude.class);
+                    // Attribute<ApplicationArea> applicationAreaAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AREA_APPL, ApplicationArea.class);
+                    // Attribute<SimpleColor> colorAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_COLOR, SimpleColor.class);
+                    Attribute<DeviceAlertCondition> deviceAlertConditionAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_DEV_AL_COND, DeviceAlertCondition.class);
+                    Attribute<DisplayResolution> displayResolutionAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_DISP_RES, DisplayResolution.class);
+                    Attribute<VisualGrid> visualGridAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRID_VIS_I16, VisualGrid.class);
+                    Attribute<InvokeId> associationInvokeIdAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_ASSOC_NO, InvokeId.class);
+                    Attribute<SystemModel> systemModelAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
+                    Attribute<ProductionSpecification> productionSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_PROD_SPECN, ProductionSpecification.class);
+                    Attribute<Type> objectTypeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_ID_TYPE, Type.class);
+                    // Attribute<LineFrequency> lineFrequencyAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_LINE_FREQ, LineFrequency.class);
+
+                    Attribute<SystemLocalization> systemLocalizationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_LOCALIZN, SystemLocalization.class);
+                    // Attribute<> metricInfoLabel = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_METRIC_INFO_LABEL, .class);
+                    // Attribute<> metricInfoStrLabel = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_METRIC_INFO_LABEL_STR, .class);
+                    Attribute<MetricSpecification> metricSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_METRIC_SPECN, MetricSpecification.class);
+                    Attribute<MetricState> metricStateAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_METRIC_STAT, MetricState.class);
+                    Attribute<MeasureMode> measureModeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_MODE_MSMT, MeasureMode.class);
+                    Attribute<OperatingMode> operatingModeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_MODE_OP, OperatingMode.class);
+                    Attribute<NomenclatureVersion> nomenclatureVersionAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_NOM_VERS, NomenclatureVersion.class);
+                    Attribute<CompoundNumericObservedValue> compoundNumericObservedValueAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_NU_CMPD_VAL_OBS, CompoundNumericObservedValue.class);
+                    Attribute<NumericObservedValue> numericObservedValueAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_NU_VAL_OBS, NumericObservedValue.class);
+                    // Attribute<PatientBSAFormula> patientBSAFormulaAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_BSA, PatientBSAFormula.class);
+                    // Attribute<PatientDemographicState> patientDemographicStateAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_DEMOG_ST, PatientDemographicState.class);
+                    Attribute<AbsoluteTime> patientDOBAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_DOB, AbsoluteTime.class);
+                    Attribute<drivers.philips.intellivue.data.String> patientIdAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_ID, drivers.philips.intellivue.data.String.class);
+                    Attribute<drivers.philips.intellivue.data.String> patientFamilyNameAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_NAME_FAMILY, drivers.philips.intellivue.data.String.class);
+                    Attribute<drivers.philips.intellivue.data.String> patientGivenNameAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_NAME_GIVEN, drivers.philips.intellivue.data.String.class);
+                    // Attribute<PatientSex> patientSexAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_SEX, PatientSex.class);
+                    // Attribute<PatientType> patientTypeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_TYPE, PatientType.class);
+                    Attribute<SampleArrayCalibrationSpecification> sampleArrayCalibrationSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_CALIB_I16, SampleArrayCalibrationSpecification.class);
+                    Attribute<SampleArrayCompoundObservedValue> sampleArrayCompoundObservedValueAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_CMPD_VAL_OBS, SampleArrayCompoundObservedValue.class);
+                    Attribute<SampleArrayPhysiologicalRange> sampleArrayPhysiologicalRangeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_RANGE_PHYS_I16, SampleArrayPhysiologicalRange.class);
+                    Attribute<SampleArraySpecification> sampleArraySpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_SPECN, SampleArraySpecification.class);
+                    Attribute<SampleArrayObservedValue> sampleArrayObservedValueAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_VAL_OBS, SampleArrayObservedValue.class);
+                    Attribute<ScaleAndRangeSpecification> scaleAndRangeSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SCALE_SPECN_I16, ScaleAndRangeSpecification.class);
+                    // Attribute<> safetyStandardAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_STD_SAFETY, .class);
+                    // Attribute<VariableLabel> systemIdAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SYS_ID, VariableLabel.class);
+                    Attribute<SystemSpecification> systemSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SYS_SPECN, SystemSpecification.class);
+                    Attribute<Type> systemTypeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SYS_TYPE, Type.class);
+                    Attribute<AbsoluteTime> dateAndTimeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_ABS, AbsoluteTime.class);
+                    Attribute<RelativeTime> samplePeriodAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_PD_SAMP, RelativeTime.class);
+                    Attribute<RelativeTime> relativeTimeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_REL, RelativeTime.class);
+                    Attribute<AbsoluteTime> absoluteTimeStampAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_STAMP_ABS, AbsoluteTime.class);
+                    Attribute<RelativeTime> relativeTimeStampAttribute1 = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_STAMP_REL, RelativeTime.class);
+
+                    // Attribute<UnitCode> unitCodeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_UNIT_CODE, UnitCode.class);
+                    // Attribute<EnumValue> enumObservedValueAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_VAL_ENUM_OBS, EnumValue.class);
+                    // Attribute<MDSStatus> mdsStatusAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_VMS_MDS_STAT, MDSStatus.class);
+                    Attribute<PatientMeasurement> patientAgeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_AGE, PatientMeasurement.class);
+                    Attribute<PatientMeasurement> patientHeightAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_HEIGHT, PatientMeasurement.class);
+                    Attribute<PatientMeasurement> patientWeightAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_WEIGHT, PatientMeasurement.class);
+                    Attribute<SampleArrayFixedValueSpecification> sampleArrayFixedValueSpecificationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_SA_FIXED_VAL_SPECN, SampleArrayFixedValueSpecification.class);
+                    // Attribute<PatientPacedMode> patientPacedModeAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_PACED_MODE, PatientPacedMode.class);
+                    Attribute<drivers.philips.intellivue.data.String> internalPatientIdAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_ID_INT, drivers.philips.intellivue.data.String.class);
+                    // Attribute<> privateAttribute = AttributeFactory.getAttribute(AttributeId.NOM_SAT_O2_TONE_FREQ, .class);
+                    // Attribute<> privateAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_CMPD_REF_LIST, .class);
+                    Attribute<IPAddressInformation> IPAddressInformationAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_NET_ADDR_INFO, IPAddressInformation.class);
+                    Attribute<ProtocolSupport> protocolSupportAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PCOL_SUPPORT, ProtocolSupport.class);
+                    Attribute<drivers.philips.intellivue.data.String> notes1Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_NOTES1, drivers.philips.intellivue.data.String.class);
+                    Attribute<drivers.philips.intellivue.data.String> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_NOTES2, drivers.philips.intellivue.data.String.class);
+                    // Attribute<> timePerodicDataPollAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_TIME_PD_POLL, .class);
+                    // Attribute<PatientBSAFormula> patientBSAFormulaAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_PT_BSA_FORMULA, PatientBSAFormula.class);
+
+                    Attribute<MDSGeneralSystemInfo> mdsGeneralSystemInfoAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_MDS_GEN_INFO, MDSGeneralSystemInfo.class);
+                    // Attribute<> = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_POLL_OBJ_PRIO_NUM, .class);
+                    Attribute<TextIdList> numericObjectPriorityListAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_POLL_NU_PRIO_LIST, TextIdList.class);
+                    Attribute<TextIdList> waveObjectPriorityListAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_POLL_RTSA_PRIO_LIST, TextIdList.class);
+                    // Attribute<MetricModality> metricModalityAttribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_METRIC_MODALITY, MetricModality.class);
+                    // Attribute<> alertMonitorGroup = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_AL_MON, .class);
+                    // Attribute<> metricObservedValueGroup = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_METRIC_VAL_OBS, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_PT_DEMOG, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_APPL, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_ID, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_SYS_PROD, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_VMO_DYN, .class);
+                    // Attribute<> notes2Attribute = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_GRP_VMO_STATIC, .class);
+
+
                     // Such as the monitor clock
                     intellivueRelativeClock = new IntellivueRelativeClock();
                     intellivueRelativeClock.setDeviceStartTime(attrs);
 
                     // Such as the System Model (manufacturer ID and a manufacturer-specific model number)
-                    Attribute<SystemModel> asm = attrs.getAttribute(AttributeId.NOM_ATTR_ID_MODEL, SystemModel.class);
-                    if (null != asm) {
-                        deviceIdentity.setManufacturer(asm.getValue().getManufacturer().getString());
+                    if (null != systemModelAttribute) {
+                        deviceIdentity.setManufacturer(systemModelAttribute.getValue().getManufacturer().getString());
                     }
                     switch (stateMachine.getState().ordinal()) {
                         case ConnectionState._Negotiating:
@@ -726,8 +806,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
         protected void handlerAlert(AttributeValueList attrs) {
             Attribute<DeviceAlertCondition> deviceAlertCondition = attrs.getAttribute(AbstractIntellivueRunner.this.deviceAlertCondition);
-            Attribute<DevAlarmList> patientAlertList = attrs.getAttribute(AbstractIntellivueRunner.this.patientAlertList);
-            Attribute<DevAlarmList> technicalAlertList = attrs.getAttribute(AbstractIntellivueRunner.this.technicalAlertList);
+            Attribute<DeviceAlarmList> patientAlertList = attrs.getAttribute(AbstractIntellivueRunner.this.patientAlertList);
+            Attribute<DeviceAlarmList> technicalAlertList = attrs.getAttribute(AbstractIntellivueRunner.this.technicalAlertList);
 
             if (null != deviceAlertCondition) {
                 log.debug("writeDeviceAlert(deviceAlertCondition.getValue().getDeviceAlertState().toString());");
@@ -1073,8 +1153,8 @@ public abstract class AbstractIntellivueRunner extends AbstractDeviceRunner {
 
     // ALERTS
     protected final Attribute<DeviceAlertCondition> deviceAlertCondition            = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_DEV_AL_COND, DeviceAlertCondition.class);
-    protected final Attribute<DevAlarmList> patientAlertList                        = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_P_AL_LIST, DevAlarmList.class);
-    protected final Attribute<DevAlarmList> technicalAlertList                      = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_T_AL_LIST, DevAlarmList.class);
+    protected final Attribute<DeviceAlarmList> patientAlertList                        = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_P_AL_LIST, DeviceAlarmList.class);
+    protected final Attribute<DeviceAlarmList> technicalAlertList                      = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_AL_MON_T_AL_LIST, DeviceAlarmList.class);
 
     // OBSERVATIONS
     protected final Attribute<CompoundNumericObservedValue> compoundObserved        = AttributeFactory.getAttribute(AttributeId.NOM_ATTR_NU_CMPD_VAL_OBS, CompoundNumericObservedValue.class);
