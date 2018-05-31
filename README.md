@@ -33,6 +33,14 @@ Have fun!
 ls build/libs/
 ```
 
+### Building a "fat" .jar (if you know what you are doing)
+
+```commandline
+./gradlew fulljar
+ls build/libs/
+```
+
+
 Exemples are available here:
 
 * [LightICE to zeromq (Kotlin)](https://github.com/jaj42/IntelliPhynet)
